@@ -22,12 +22,5 @@ def compress(directory):
         ppds_attributes[ppd_path] = {"start": ppd_start, "size": ppd_size}
         ppds += ppd
 
-    #ppds_attributes["ppds"] = lzma.compress(ppds)
-
     ppds_compressed = lzma.compress(ppds)
-
     return cPickle.dumps(ppds_attributes) + ppds_compressed
-    #output = open("ppds.pkl", "wb")
-    #cPickle.dump(ppds_attributes, output)
-    #output.write(ppds_compressed)
-    #output.close()
