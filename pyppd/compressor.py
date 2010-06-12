@@ -4,7 +4,7 @@ import cPickle
 import lzma
 
 def find_files(directory, pattern):
-    """Yield each file that matches pattern in directory"""
+    """Yields each file that matches pattern in directory"""
     for root, dirnames, filenames in os.walk(directory):
         for filename in fnmatch.filter(filenames, pattern):
             yield os.path.join(root, filename)
