@@ -10,6 +10,15 @@ def find_files(directory, pattern):
             yield os.path.join(root, filename)
 
 def compress(directory):
+    """Compresses and indexes all *.ppd files in directory returning as a string.
+
+    The directory is walked recursively, concatenating all ppds found. For each,
+    it saves it's path, size and where it starts (in the concatenated strings)
+    into a dictionary.
+    Then, it compresses the string of all ppds concatenated and returns the
+    pickle dump of the dictionary concatenated with the compressed ppds.
+
+    """
     ppds = ""            # String with all PPDs concatenated.
     ppds_size = 0        # Auxiliary value that holds intermediate ppds size.
     ppds_attributes = {} # Dictionary with each PPD start and size values in ppds.
