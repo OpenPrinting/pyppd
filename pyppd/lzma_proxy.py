@@ -14,7 +14,7 @@ def compress(value):
         return lzma.compress(value)
 
     process = Popen([binary, "--compress", "--force"], stdin=PIPE, stdout=PIPE)
-    return process.communicate(value)
+    return process.communicate(value)[0]
 
 def decompress(value):
     """Decompresses a string with either python-lzma or the xz binary"""
@@ -23,4 +23,4 @@ def decompress(value):
 
     process = Popen([binary, "--decompress", "--stdout", "--force"],
                     stdin=PIPE, stdout=PIPE)
-    return process.communicate(value)
+    return process.communicate(value)[0]
