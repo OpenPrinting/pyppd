@@ -2,8 +2,7 @@ import os
 import fnmatch
 import cPickle
 from ppd import PPD
-import lzma_proxy
-lzma = lzma_proxy
+import lzma_proxy as lzma
 
 def find_files(directory, pattern):
     """Yields each file that matches pattern in directory."""
