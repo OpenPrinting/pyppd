@@ -1,6 +1,7 @@
 import os
 import fnmatch
 import cPickle
+from ppd import PPD
 import lzma_proxy
 lzma = lzma_proxy
 
@@ -20,17 +21,18 @@ def compress(directory):
     pickle dump of the dictionary concatenated with the compressed ppds.
 
     """
-    ppds = ""            # String with all PPDs concatenated.
+    ppds_string = ""     # String with all PPDs concatenated.
     ppds_size = 0        # Auxiliary value that holds intermediate ppds size.
-    ppds_attributes = {} # Dictionary with each PPD start and size values in ppds.
+    ppds = {}            # Dictionary with PPD objects.
 
     for ppd_path in find_files(directory, "*.ppd"):
-        ppd = open(ppd_path).read()
-        ppd_size = len(ppd)
-        ppd_start = ppds_size
-        ppds_size += ppd_size
-        ppds_attributes[ppd_path] = {"start": ppd_start, "size": ppd_size}
-        ppds += ppd
+        ppd_file = open(ppd_path).read()
+        a_ppd = PPD(ppd_file)
+        a_ppd.size = len(ppd_file)
+        a_ppd.start = ppds_size
+        ppds_size += a_ppd.size
+        ppds[a_ppd.name] = a_ppd
+        ppds_string += ppd_file
 
-    ppds_compressed = lzma.compress(ppds)
-    return cPickle.dumps(ppds_attributes) + ppds_compressed
+    ppds_compressed = lzma.compress(ppds_string)
+    return cPickle.dumps(ppds) + ppds_compressed
