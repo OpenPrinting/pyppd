@@ -2,7 +2,7 @@ from optparse import OptionParser
 from os.path import isdir
 import compressor
 
-def run():
+def parse_args():
     parser = OptionParser(usage="usage: %prog [options] ppds_directory",
                           version="%prog 0.1.0\n"
                                   "Copyright (C) 2010 Vitor Baptista.\n"
@@ -19,6 +19,12 @@ def run():
     ppds_directory = args[0]
     if not isdir(ppds_directory):
         parser.error(ppds_directory + " isn't a directory")
+
+    return (options, args)
+
+
+def run():
+    (options, args) = parse_args()
 
     output = open(options.output, "wb")
     output.write(compressor.compress(ppds_directory))
