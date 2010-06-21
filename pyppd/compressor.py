@@ -25,7 +25,7 @@ def compress(directory):
     for ppd_path in find_files(directory, "*.ppd"):
         ppd_file = open(ppd_path).read()
         a_ppd = PPD(ppd_file)
-        ppds[a_ppd.name] = a_ppd
+        ppds[a_ppd.name] = (str(a_ppd), ppd_file)
 
     ppds_pickle = cPickle.dumps(ppds)
     ppds_compressed = lzma.compress(ppds_pickle)
