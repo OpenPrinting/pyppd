@@ -5,6 +5,7 @@
 # lzma_proxy.py
 
 from optparse import OptionParser
+from sys import argv
 import base64
 import cPickle
 
@@ -14,11 +15,15 @@ def load():
     return cPickle.loads(ppds_decompressed)
 
 def list():
+    binary_name = argv[0].replace('./', '')
     ppds = load()
     for ppd in ppds.values():
-        print ppd[0]
+        print ppd[0].replace('"', '"' + binary_name + ':', 1)
 
 def cat(ppd):
+    # Ignore driver's name, take only PPD's
+    ppd = ppd.split(":")[1]
+
     ppds = load()
     if ppds.has_key(ppd):
         return ppds[ppd][1]
