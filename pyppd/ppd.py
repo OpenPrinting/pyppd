@@ -46,7 +46,8 @@ LANGUAGES = {'afar': 'aa', 'abkhazian': 'ab', 'afrikaans': 'af',
              'ukrainian': 'uk', 'urdu': 'ur', 'uzbek': 'uz', 
              'vietnamese': 'vi', 'volapuk': 'vo', 'wolof': 'wo', 
              'xhosa': 'xh', 'yoruba': 'yo', 'chinese': 'zh', 
-             'zulu': 'zu'}
+             'simplified chinese': 'zh_TW', 'traditional chinese': 'zh_CN',
+             'zulu': 'zu', 'portuguese_brazil': 'pt_BR'}
 
 class PPD:
     """Represents a PostScript Description file."""
