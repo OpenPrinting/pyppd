@@ -7,37 +7,32 @@
 from optparse import OptionParser
 from sys import argv
 import base64
-import sqlite3
-from tempfile import NamedTemporaryFile
+import cPickle
+import tarfile
+from cStringIO import StringIO
 
 def load():
     ppds_compressed = base64.b64decode(ppds_compressed_b64)
-    ppds_decompressed = lzma.decompress(ppds_compressed)
-    db_file = NamedTemporaryFile()
-    db_file.write(ppds_decompressed)
-    db_file.seek(0)
-    con = sqlite3.connect(db_file.name)
-    con.text_factory = str
-    return con
+    ppds = cPickle.loads(ppds_compressed)
+    ppds['ARCHIVE'] = tarfile.open(fileobj=StringIO(lzma.decompress(ppds['ARCHIVE'])))
+    return ppds
 
 def list():
     binary_name = argv[0].replace('./', '')
-    con = load()
-    cur = con.cursor()
-    cur.execute("SELECT description FROM ppds")
-    for ppd in cur.fetchall():
-        print ppd[0].replace('"', '"' + binary_name + ':', 1)
+    ppds = load()
+    for ppd in ppds.values():
+        if ppd.__class__ == tarfile.TarFile: continue
+        print ppd[1].replace('"', '"' + binary_name + ':', 1)
 
 def cat(ppd):
     # Ignore driver's name, take only PPD's
     ppd = ppd.split(":")[1]
 
-    con = load()
-    cur = con.cursor()
-    cur.execute("SELECT file FROM ppds WHERE name = ?", (ppd,))
-    result = cur.fetchone()
-
-    if result: return result[0]
+    ppds = load()
+    if ppds.has_key(ppd):
+        tarinfo = ppds['ARCHIVE'].getmember(ppds[ppd][0])
+        ppd = ppds['ARCHIVE'].extractfile(tarinfo)
+        return ppd.read()
 
 def main():
     parser = OptionParser(usage="usage: %prog list\n"
