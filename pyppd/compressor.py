@@ -31,5 +31,6 @@ def compress(directory):
             next
 
     ppds_pickle = cPickle.dumps(ppds)
+    ppds = None
     ppds_compressed = lzma.compress(ppds_pickle)
     return ppds_compressed
