@@ -24,3 +24,10 @@ def decompress(value):
     process = Popen([binary, "--decompress", "--stdout", "--force"],
                     stdin=PIPE, stdout=PIPE)
     return process.communicate(value)[0]
+
+def compress_file(path):
+    """Compress the file at 'path' with the xz binary"""
+
+    binary = "xz"
+    process = Popen([binary, "--compress", "--force", "--stdout", path], stdout=PIPE)
+    return process.communicate()[0]
