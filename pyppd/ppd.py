@@ -64,7 +64,10 @@ class PPD:
             self.language = LANGUAGES[str.strip(language.group(1)).lower()]
             self.manufacturer = str.strip(manufacturer.group(1))
             self.nickname = str.strip(nickname.group(1))
-            self.deviceid = str.strip(deviceid.group(1))
+            if deviceid:
+                self.deviceid = str.strip(deviceid.group(1))
+            else:
+                self.deviceid = "MFG: %s;MDL: %s;" % (self.manufacturer, self.nickname)
         except:
             raise Exception, "Error parsing PPD file"
 
