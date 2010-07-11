@@ -8,13 +8,16 @@ from optparse import OptionParser
 from sys import argv
 import base64
 import sqlite3
+from tempfile import NamedTemporaryFile
 
 def load():
     ppds_compressed = base64.b64decode(ppds_compressed_b64)
     ppds_decompressed = lzma.decompress(ppds_compressed)
-    con = sqlite3.connect(":memory:")
+    db_file = NamedTemporaryFile()
+    db_file.write(ppds_decompressed)
+    db_file.seek(0)
+    con = sqlite3.connect(db_file.name)
     con.text_factory = str
-    con.executescript(ppds_decompressed)
     return con
 
 def list():
@@ -32,7 +35,9 @@ def cat(ppd):
     con = load()
     cur = con.cursor()
     cur.execute("SELECT file FROM ppds WHERE name = ?", (ppd,))
-    return cur.fetchone()[0]
+    result = cur.fetchone()
+
+    if result: return result[0]
 
 def main():
     parser = OptionParser(usage="usage: %prog list\n"

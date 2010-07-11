@@ -1,6 +1,7 @@
 import os
 import fnmatch
 import sqlite3
+from tempfile import NamedTemporaryFile
 from ppd import PPD
 import lzma_proxy as lzma
 
@@ -19,7 +20,8 @@ def compress(directory):
     It returns the compressed dump of the sqlite3 database.
 
     """
-    con = sqlite3.connect(":memory:")
+    db_file = NamedTemporaryFile()
+    con = sqlite3.connect(db_file.name)
     con.text_factory = str
     cur = con.cursor()
     cur.execute("CREATE TABLE ppds (name TEXT, description TEXT, file TEXT)")
@@ -33,6 +35,9 @@ def compress(directory):
         except:
             next
 
-    ppds_compressed = lzma.compress("\n".join(con.iterdump()))
+    con.commit()
     con.close()
+    db_file.seek(0)
+    ppds_compressed = lzma.compress(db_file.read())
+    db_file.close()
     return ppds_compressed
