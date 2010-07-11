@@ -1,6 +1,6 @@
 import os
 import fnmatch
-import cPickle
+import sqlite3
 from ppd import PPD
 import lzma_proxy as lzma
 
@@ -13,24 +13,26 @@ def find_files(directory, pattern):
 def compress(directory):
     """Compresses and indexes all *.ppd files in directory returning as a string.
 
-    The directory is walked recursively, concatenating all ppds found. For each,
-    it saves it's path, size and where it starts (in the concatenated strings)
-    into a dictionary.
-    Then, it compresses the string of all ppds concatenated and returns the
-    pickle dump of the dictionary concatenated with the compressed ppds.
+    The directory is walked recursively, inserting all ppds found in a sqlite3 db.
+    For each, it parses and saves its name, description (in the format CUPS needs)
+    and the file.
+    It returns the compressed dump of the sqlite3 database.
 
     """
-    ppds = {}            # Dictionary with PPD objects.
+    con = sqlite3.connect(":memory:")
+    con.text_factory = str
+    cur = con.cursor()
+    cur.execute("CREATE TABLE ppds (name TEXT, description TEXT, file TEXT)")
 
     for ppd_path in find_files(directory, "*.ppd"):
         try:
             ppd_file = open(ppd_path).read()
             a_ppd = PPD(ppd_file)
-            ppds[a_ppd.name] = (str(a_ppd), ppd_file)
+            cur.execute("INSERT INTO ppds VALUES (?, ?, ?)",
+                        (a_ppd.name, str(a_ppd), ppd_file))
         except:
             next
 
-    ppds_pickle = cPickle.dumps(ppds)
-    ppds = None
-    ppds_compressed = lzma.compress(ppds_pickle)
+    ppds_compressed = lzma.compress("\n".join(con.iterdump()))
+    con.close()
     return ppds_compressed
