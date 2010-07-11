@@ -24,7 +24,7 @@ def compress(directory):
     con = sqlite3.connect(db_file.name)
     con.text_factory = str
     cur = con.cursor()
-    cur.execute("CREATE TABLE ppds (name TEXT, description TEXT, file TEXT)")
+    cur.execute("CREATE TABLE ppds (name TEXT PRIMARY KEY, description TEXT, file TEXT)")
 
     for ppd_path in find_files(directory, "*.ppd"):
         try:
