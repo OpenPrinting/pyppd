@@ -67,7 +67,9 @@ class PPD:
             if deviceid:
                 self.deviceid = str.strip(deviceid.group(1))
             else:
-                self.deviceid = "MFG: %s;MDL: %s;" % (self.manufacturer, self.nickname)
+                product = re.search('Product:\s*"(.+)"', ppd_file)
+                product = str.strip(product.group(1))
+                self.deviceid = "MFG: %s;MDL: %s;" % (self.manufacturer, product)
         except:
             raise Exception, "Error parsing PPD file"
 
