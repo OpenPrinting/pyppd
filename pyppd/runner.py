@@ -19,7 +19,7 @@ def parse_args():
         parser.error("incorrect number of arguments")
 
     if not os.path.isdir(args[0]):
-        parser.error(ppds_directory + " isn't a directory")
+        parser.error("'%s' isn't a directory" % args[0])
 
     return (options, args)
 
