@@ -67,7 +67,7 @@ class PPD:
             if deviceid:
                 self.deviceid = str.strip(deviceid.group(1))
             else:
-                product = re.search('Product:\s*"(.+)"', ppd_file)
+                product = re.search('Product:\s*"\((.+)\)"', ppd_file)
                 product = str.strip(product.group(1))
                 self.deviceid = "MFG: %s;MDL: %s;" % (self.manufacturer, product)
         except:
