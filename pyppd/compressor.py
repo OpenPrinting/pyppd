@@ -8,7 +8,8 @@ import lzma_proxy as lzma
 
 def find_files(directory, pattern):
     """Yields each file that matches pattern in directory."""
-    for root, dirnames, filenames in os.walk(directory):
+    abs_directory = os.path.abspath(directory)
+    for root, dirnames, filenames in os.walk(abs_directory):
         for filename in fnmatch.filter(filenames, pattern):
             yield os.path.join(root, filename)
 
@@ -29,9 +30,14 @@ def compress(directory):
     for ppd_path in find_files(directory, "*.ppd"):
         try:
             ppd_file = open(ppd_path).read()
+            ppds.add(ppd_path)
+
+            # Removes the first slash in the path, so we can find the file in
+            # the tar archive.
+            ppd_path = ppd_path[1:]
+
             a_ppd = PPD(ppd_file)
             ppds_index[a_ppd.name] = (ppd_path, str(a_ppd))
-            ppds.add(ppd_path)
         except:
             next
 
