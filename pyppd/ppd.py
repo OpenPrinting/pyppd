@@ -49,7 +49,7 @@ LANGUAGES = {'afar': 'aa', 'abkhazian': 'ab', 'afrikaans': 'af',
              'simplified chinese': 'zh_TW', 'traditional chinese': 'zh_CN',
              'zulu': 'zu', 'portuguese_brazil': 'pt_BR'}
 
-class PPD:
+class PPD(object):
     """Represents a PostScript Description file."""
     def __init__(self, ppd_file):
         """Initializes a PPD object with the information at ppd_file string."""
