@@ -17,7 +17,7 @@ def load():
     ppds['ARCHIVE'] = tarfile.open(fileobj=StringIO(lzma.decompress(ppds['ARCHIVE'])))
     return ppds
 
-def list():
+def ls():
     binary_name = argv[0].replace('./', '')
     ppds = load()
     for ppd in ppds.values():
@@ -50,7 +50,7 @@ def main():
         parser.error("incorrect number of arguments")
 
     if args[0].lower() == 'list':
-        list()
+        ls()
     elif args[0].lower() == 'cat':
         if not len(args) == 2:
             parser.error("incorrect number of arguments")
