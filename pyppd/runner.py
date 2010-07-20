@@ -5,11 +5,14 @@ import compressor
 import archiver
 
 def parse_args():
-    parser = OptionParser(usage="usage: %prog [options] ppds_directory",
-                          version="%prog 0.1.0\n"
-                                  "Copyright (c) 2010 Vitor Baptista.\n"
-                                  "This is free software; see the source for copying conditions."
-                                  " There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.")
+    usage = "usage: %prog [options] ppds_directory"
+    version = "%prog 0.1.0\n"
+              "Copyright (c) 2010 Vitor Baptista.\n"
+              "This is free software; see the source for copying conditions."
+              " There is NO warranty; not even for MERCHANTABILITY or \
+                                        FITNESS FOR A PARTICULAR PURPOSE."
+    parser = OptionParser(usage=usage,
+                          version=version)
     parser.add_option("-o", "--output",
                       default="pyppd-ppdfile", metavar="FILE",
                       help="write archive to FILE [default %default]")
