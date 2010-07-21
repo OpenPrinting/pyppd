@@ -64,4 +64,5 @@ def main():
 # PPDs Archive
 ppds_compressed_b64 = "@ppds_compressed_b64@"
 
-main()
+if __name__ == "__main__":
+    main()
