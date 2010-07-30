@@ -15,7 +15,6 @@ def load():
     ppds_compressed = base64.b64decode(ppds_compressed_b64)
     ppds_decompressed = lzma.decompress(ppds_compressed)
     ppds = cPickle.loads(ppds_decompressed)
-    ppds['ARCHIVE'] = tarfile.open(fileobj=StringIO(lzma.decompress(ppds['ARCHIVE'])))
     return ppds
 
 def ls():
@@ -30,6 +29,8 @@ def cat(ppd):
     ppd = ppd.split(":")[1]
 
     ppds = load()
+    ppds['ARCHIVE'] = tarfile.open(fileobj=StringIO(lzma.decompress(ppds['ARCHIVE'])))
+
     if ppds.has_key(ppd):
         tarinfo = ppds['ARCHIVE'].getmember(ppds[ppd][0])
         ppd = ppds['ARCHIVE'].extractfile(tarinfo)
