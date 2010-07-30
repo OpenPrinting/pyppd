@@ -42,7 +42,7 @@ def compress(directory):
             next
 
     ppds_index['ARCHIVE'] = lzma.compress_file(tmp.name)
-    ppds_pickle = cPickle.dumps(ppds_index)
+    ppds_pickle = lzma.compress(cPickle.dumps(ppds_index))
     ppds.close()
 
     return ppds_pickle

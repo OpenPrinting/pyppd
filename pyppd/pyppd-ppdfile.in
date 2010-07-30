@@ -13,7 +13,8 @@ from cStringIO import StringIO
 
 def load():
     ppds_compressed = base64.b64decode(ppds_compressed_b64)
-    ppds = cPickle.loads(ppds_compressed)
+    ppds_decompressed = lzma.decompress(ppds_compressed)
+    ppds = cPickle.loads(ppds_decompressed)
     ppds['ARCHIVE'] = tarfile.open(fileobj=StringIO(lzma.decompress(ppds['ARCHIVE'])))
     return ppds
 
