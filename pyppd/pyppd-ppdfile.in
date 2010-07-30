@@ -13,7 +13,7 @@ from cStringIO import StringIO
 
 def load():
     ppds_compressed = base64.b64decode(ppds_compressed_b64)
-    ppds_decompressed = lzma.decompress(ppds_compressed)
+    ppds_decompressed = decompress(ppds_compressed)
     ppds = cPickle.loads(ppds_decompressed)
     return ppds
 
@@ -29,7 +29,7 @@ def cat(ppd):
     ppd = ppd.split(":")[1]
 
     ppds = load()
-    ppds['ARCHIVE'] = tarfile.open(fileobj=StringIO(lzma.decompress(ppds['ARCHIVE'])))
+    ppds['ARCHIVE'] = tarfile.open(fileobj=StringIO(decompress(ppds['ARCHIVE'])))
 
     if ppds.has_key(ppd):
         tarinfo = ppds['ARCHIVE'].getmember(ppds[ppd][0])
