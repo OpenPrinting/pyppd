@@ -9,7 +9,7 @@ Instalation
 
 To install ``pyppd``, run as root:
 
-  # python setup.py install
+  python setup.py install
 
 It depends on Python 2.x (http://www.python.org) and XZ Utils
 (http://tukaani.org/xz/).
@@ -19,15 +19,17 @@ Usage
 
 At first, you have to create a PPD archive. For such, put all PPDs you want to
 add in the archive inside a single folder (which can have subfolders), then run:
-  $ pyppd /path/to/your/ppd/folder
+
+  pyppd /path/to/your/ppd/folder
 
 It'll create ``pyppd-ppdfile`` in your current folder. You can test it by
 running:
-  $ ./pyppd-ppdfile list
+
+  ./pyppd-ppdfile list
 
 And, for reading a PPD from the archive, simply do:
 
-  $ ./pyppd-ppdfile cat pyppd-ppdfile:MY-PPD-FILE.PPD
+  ./pyppd-ppdfile cat pyppd-ppdfile:MY-PPD-FILE.PPD
 
 For CUPS to be able to use your newly-created archive, copy ``pyppd-ppdfile``
 to ``/usr/lib/cups/driver/`` and you're done.
