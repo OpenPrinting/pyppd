@@ -7,7 +7,11 @@ can be listed and retrieved only when needed by CUPS, saving disk space.
 Instalation
 -----------
 
-To install ``pyppd``, run as root:
+To install ``pyppd``, you can use:
+
+  pip install pyppd
+
+Or download the source package, uncompress, and run as root:
 
   python setup.py install
 
