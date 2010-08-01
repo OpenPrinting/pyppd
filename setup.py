@@ -5,7 +5,7 @@ setup(
     version='0.1.0',
     author='Vitor Baptista',
     author_email='vitor@vitorbaptista.com',
-    packages=['pyppd', 'pyppd.test'],
+    packages=['pyppd'],
     package_data={'pyppd': ['*.in']},
     scripts=['bin/pyppd'],
     url='http://gitorious.org/vitorbaptista/pyppd/',
