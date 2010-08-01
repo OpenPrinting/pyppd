@@ -1,0 +1,5 @@
+ISSUES
+======
+
+* ``setup.py install`` should link pyppd to /usr/lib/cups/driver, so CUPS'll
+  begin using it.
