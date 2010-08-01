@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='pyppd',
-    version='0.1.1',
+    version='0.1.3',
     author='Vitor Baptista',
     author_email='vitor@vitorbaptista.com',
     packages=['pyppd'],
