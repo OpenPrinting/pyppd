@@ -10,4 +10,5 @@ setup(
     scripts=['bin/pyppd'],
     url='http://gitorious.org/vitorbaptista/pyppd/',
     license='LICENSE.txt',
+    long_description=open('README.txt'),
 )
