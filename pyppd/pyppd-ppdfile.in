@@ -26,7 +26,7 @@ def ls():
 
 def cat(ppd):
     # Ignore driver's name, take only PPD's
-    ppd = ppd.split(":")[1]
+    ppd = ppd.split(":")[-1]
 
     ppds = load()
     ppds['ARCHIVE'] = tarfile.open(fileobj=StringIO(decompress(ppds['ARCHIVE'])))
