@@ -39,7 +39,7 @@ def compress(directory):
             a_ppd = PPD(ppd_file)
             ppds_index[a_ppd.name] = (ppd_path, str(a_ppd))
         except:
-            next
+            raise
 
     ppds_index['ARCHIVE'] = lzma.compress_file(tmp.name)
     ppds_pickle = lzma.compress(cPickle.dumps(ppds_index))
