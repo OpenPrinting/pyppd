@@ -7,7 +7,7 @@ def compress(value):
     return process.communicate(value)[0]
 
 def decompress(value):
-    """Decompresses a string with either python-lzma or the xz binary"""
+    """Decompresses a string with the xz binary"""
 
     process = Popen(["xz", "--decompress", "--stdout", "--force"],
                     stdin=PIPE, stdout=PIPE)
