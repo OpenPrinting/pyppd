@@ -8,27 +8,22 @@ import tempfile
 import compressor
 from ppd import PPD
 
-def read_file_in_syspath(filename):
-    """Reads the file in filename in each sys.path.
+def create_archive(ppds_directory):
+    """Returns a string with the decompressor, its dependencies and the archive.
 
-    If we couldn't find, throws the last IOError caught.
+    It reads the template at pyppd/pyppd-ppdfile.in, inserts the dependencies
+    and the archive encoded in base64, and returns as a string.
 
     """
-    last_exception = None
-    for path in sys.path:
-        try:
-            return open(path + "/" + filename).read()
-        except IOError as ex:
-            last_exception = ex
-            continue
-    raise last_exception
+    ppds_compressed = base64.b64encode(compress(ppds_directory))
 
-def find_files(directory, pattern):
-    """Yields each file that matches pattern in directory."""
-    abs_directory = os.path.abspath(directory)
-    for root, dirnames, filenames in os.walk(abs_directory):
-        for filename in fnmatch.filter(filenames, pattern):
-            yield os.path.join(root, filename)
+    template = read_file_in_syspath("pyppd/pyppd-ppdfile.in")
+    compressor_py = read_file_in_syspath("pyppd/compressor.py")
+
+    template = template.replace("@compressor@", compressor_py)
+    template = template.replace("@ppds_compressed_b64@", ppds_compressed)
+
+    return template
 
 def compress(directory):
     """Compresses and indexes all *.ppd files in directory returning as a string.
@@ -64,19 +59,25 @@ def compress(directory):
 
     return ppds_pickle
 
-def create_archive(ppds_directory):
-    """Returns a string with the decompressor, its dependencies and the archive.
 
-    It reads the template at pyppd/pyppd-ppdfile.in, inserts the dependencies
-    and the archive encoded in base64, and returns as a string.
+def read_file_in_syspath(filename):
+    """Reads the file in filename in each sys.path.
+
+    If we couldn't find, throws the last IOError caught.
 
     """
-    ppds_compressed = base64.b64encode(compress(ppds_directory))
+    last_exception = None
+    for path in sys.path:
+        try:
+            return open(path + "/" + filename).read()
+        except IOError as ex:
+            last_exception = ex
+            continue
+    raise last_exception
 
-    template = read_file_in_syspath("pyppd/pyppd-ppdfile.in")
-    compressor_py = read_file_in_syspath("pyppd/compressor.py")
-
-    template = template.replace("@compressor@", compressor_py)
-    template = template.replace("@ppds_compressed_b64@", ppds_compressed)
-
-    return template
+def find_files(directory, pattern):
+    """Yields each file that matches pattern in directory."""
+    abs_directory = os.path.abspath(directory)
+    for root, dirnames, filenames in os.walk(abs_directory):
+        for filename in fnmatch.filter(filenames, pattern):
+            yield os.path.join(root, filename)
