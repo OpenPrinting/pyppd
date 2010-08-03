@@ -20,8 +20,8 @@ def load():
 def ls():
     binary_name = argv[0].replace('./', '')
     ppds = load()
-    for ppd in ppds.values():
-        if ppd.__class__ == tarfile.TarFile: continue
+    for key, ppd in ppds.iteritems():
+        if key == 'ARCHIVE': continue
         print ppd[1].replace('"', '"' + binary_name + ':', 1)
 
 def cat(ppd):
