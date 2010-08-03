@@ -1,7 +1,6 @@
 import os
 import stat
 from optparse import OptionParser
-import compressor
 import archiver
 
 def parse_args():
@@ -31,7 +30,7 @@ def run():
     (options, args) = parse_args()
     ppds_directory = args[0]
 
-    archive = archiver.create_archive(compressor.compress(ppds_directory))
+    archive = archiver.create_archive(ppds_directory)
 
     output = open(options.output, "w+")
     output.write(archive)
