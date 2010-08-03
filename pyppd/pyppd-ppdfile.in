@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-# lzma_proxy.py
-@lzma_proxy@
-# lzma_proxy.py
+# compressor.py
+@compressor@
+# compressor.py
 
 from optparse import OptionParser
 from sys import argv

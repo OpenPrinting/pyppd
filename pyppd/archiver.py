@@ -5,8 +5,8 @@ import fnmatch
 import cPickle
 import tarfile
 import tempfile
+import compressor
 from ppd import PPD
-import lzma_proxy as lzma
 
 def read_file_in_syspath(filename):
     """Reads the file in filename in each sys.path.
@@ -58,8 +58,8 @@ def compress(directory):
         except:
             raise
 
-    ppds_index['ARCHIVE'] = lzma.compress_file(tmp.name)
-    ppds_pickle = lzma.compress(cPickle.dumps(ppds_index))
+    ppds_index['ARCHIVE'] = compressor.compress_file(tmp.name)
+    ppds_pickle = compressor.compress(cPickle.dumps(ppds_index))
     ppds.close()
 
     return ppds_pickle
@@ -74,9 +74,9 @@ def create_archive(ppds_directory):
     ppds_compressed = base64.b64encode(compress(ppds_directory))
 
     template = read_file_in_syspath("pyppd/pyppd-ppdfile.in")
-    lzma_proxy_py = read_file_in_syspath("pyppd/lzma_proxy.py")
+    compressor_py = read_file_in_syspath("pyppd/compressor.py")
 
-    template = template.replace("@lzma_proxy@", lzma_proxy_py)
+    template = template.replace("@compressor@", compressor_py)
     template = template.replace("@ppds_compressed_b64@", ppds_compressed)
 
     return template
