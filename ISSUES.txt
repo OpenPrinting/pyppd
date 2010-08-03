@@ -3,3 +3,10 @@ ISSUES
 
 * ``setup.py install`` should link pyppd to /usr/lib/cups/driver, so CUPS'll
   begin using it.
+* Support gzipped PPDs (.ppd.gz) by first uncompressing them and then including
+  them like normal PPDs.
+* If ``pyppd`` does not find PPDs, issue a warning during compression run and
+  let ``pyppd-ppdfile list`` do not output anything on stdout and a warning on
+  stderr.
+* Add logging facilities
+* Add unit tests
