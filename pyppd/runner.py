@@ -30,7 +30,7 @@ def run():
     (options, args) = parse_args()
     ppds_directory = args[0]
 
-    archive = archiver.create_archive(ppds_directory)
+    archive = archiver.archive(ppds_directory)
 
     output = open(options.output, "w+")
     output.write(archive)

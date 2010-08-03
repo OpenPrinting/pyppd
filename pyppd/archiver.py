@@ -8,7 +8,7 @@ import tempfile
 import compressor
 from ppd import PPD
 
-def create_archive(ppds_directory):
+def archive(ppds_directory):
     """Returns a string with the decompressor, its dependencies and the archive.
 
     It reads the template at pyppd/pyppd-ppdfile.in, inserts the dependencies
