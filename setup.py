@@ -4,7 +4,7 @@ from distutils.core import setup
 
 setup(
     name='pyppd',
-    version='0.1.5',
+    version='0.1.6',
     author='Vitor Baptista',
     author_email='vitor@vitorbaptista.com',
     packages=['pyppd'],
