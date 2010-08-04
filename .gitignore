@@ -6,3 +6,5 @@ dist
 *.so
 *.pyd
 *.swp
+CHANGES.txt
+MANIFEST
