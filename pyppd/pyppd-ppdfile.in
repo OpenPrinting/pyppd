@@ -8,7 +8,6 @@ from optparse import OptionParser
 from sys import argv
 import base64
 import cPickle
-import tarfile
 from cStringIO import StringIO
 
 def load():
@@ -22,19 +21,20 @@ def ls():
     ppds = load()
     for key, ppd in ppds.iteritems():
         if key == 'ARCHIVE': continue
-        print ppd[1].replace('"', '"' + binary_name + ':', 1)
+        print ppd[2].replace('"', '"' + binary_name + ':', 1)
 
 def cat(ppd):
     # Ignore driver's name, take only PPD's
     ppd = ppd.split(":")[-1]
 
     ppds = load()
-    ppds['ARCHIVE'] = tarfile.open(fileobj=StringIO(decompress(ppds['ARCHIVE'])))
+    ppds['ARCHIVE'] = StringIO(decompress(ppds['ARCHIVE']))
 
     if ppds.has_key(ppd):
-        tarinfo = ppds['ARCHIVE'].getmember(ppds[ppd][0])
-        ppd = ppds['ARCHIVE'].extractfile(tarinfo)
-        return ppd.read()
+        start = ppds[ppd][0]
+        length = ppds[ppd][1]
+        ppds['ARCHIVE'].seek(start)
+        return ppds['ARCHIVE'].read(length)
 
 def main():
     usage = "usage: %prog list\n" \

@@ -3,8 +3,6 @@ import sys
 import os
 import fnmatch
 import cPickle
-import tarfile
-import tempfile
 import compressor
 from ppd import PPD
 
@@ -35,27 +33,22 @@ def compress(directory):
     string of all ppds concatenated and returns the pickle dump of the dictionary.
 
     """
-    tmp = tempfile.NamedTemporaryFile()
-    ppds = tarfile.open(fileobj = tmp.file, mode = 'w')
+    ppds = ""
     ppds_index = {}
 
     for ppd_path in find_files(directory, "*.ppd"):
         try:
             ppd_file = open(ppd_path).read()
-            ppds.add(ppd_path)
-
-            # Removes the first slash in the path, so we can find the file in
-            # the tar archive.
-            ppd_path = ppd_path[1:]
 
             a_ppd = PPD(ppd_file)
-            ppds_index[a_ppd.name] = (ppd_path, str(a_ppd))
+            ppds_index[a_ppd.name] = (len(ppds), len(ppd_file), str(a_ppd))
+
+            ppds += ppd_file
         except:
             raise
 
-    ppds_index['ARCHIVE'] = compressor.compress_file(tmp.name)
+    ppds_index['ARCHIVE'] = compressor.compress(ppds)
     ppds_pickle = compressor.compress(cPickle.dumps(ppds_index))
-    ppds.close()
 
     return ppds_pickle
 
