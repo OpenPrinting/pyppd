@@ -26,11 +26,12 @@ def archive(ppds_directory):
 def compress(directory):
     """Compresses and indexes all *.ppd files in directory returning as a string.
 
-    The directory is walked recursively, inserting all ppds found in a tar file.
+    The directory is walked recursively, concatenating all ppds found in a string.
     For each, it parses and saves its name, description (in the format CUPS needs)
-    and path into a dictionary, used as an index.
-    Then, it compresses the tar file, adds into the dictionary as key ARCHIVE and
-    string of all ppds concatenated and returns the pickle dump of the dictionary.
+    and it's position in the ppds string (start position and length) into a
+    dictionary, used as an index.
+    Then, it compresses the string, adds into the dictionary as key ARCHIVE and
+    returns a compressed pickle dump of it.
 
     """
     ppds = ""
