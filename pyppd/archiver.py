@@ -41,7 +41,9 @@ def compress(directory):
         ppd_file = open(ppd_path).read()
 
         a_ppd = PPD(ppd_file)
-        ppds_index[a_ppd.name] = (len(ppds), len(ppd_file), str(a_ppd))
+        start = len(ppds)
+        length = len(ppd_file)
+        ppds_index[a_ppd.name] = (start, length, str(a_ppd))
 
         ppds += ppd_file
 
