@@ -37,15 +37,12 @@ def compress(directory):
     ppds_index = {}
 
     for ppd_path in find_files(directory, "*.ppd"):
-        try:
-            ppd_file = open(ppd_path).read()
+        ppd_file = open(ppd_path).read()
 
-            a_ppd = PPD(ppd_file)
-            ppds_index[a_ppd.name] = (len(ppds), len(ppd_file), str(a_ppd))
+        a_ppd = PPD(ppd_file)
+        ppds_index[a_ppd.name] = (len(ppds), len(ppd_file), str(a_ppd))
 
-            ppds += ppd_file
-        except:
-            raise
+        ppds += ppd_file
 
     ppds_index['ARCHIVE'] = compressor.compress(ppds)
     ppds_pickle = compressor.compress(cPickle.dumps(ppds_index))
