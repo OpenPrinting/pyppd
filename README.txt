@@ -21,8 +21,9 @@ It depends on Python 2.x (http://www.python.org) and XZ Utils
 Usage
 -----
 
-At first, you have to create a PPD archive. For such, put all PPDs you want to
-add in the archive inside a single folder (which can have subfolders), then run:
+At first, you have to create a PPD archive. For such, put all PPDs (they might
+be gzipped) you want to add in the archive inside a single folder (which can
+have subfolders), then run:
 
   pyppd /path/to/your/ppd/folder
 

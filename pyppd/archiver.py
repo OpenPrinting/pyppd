@@ -3,6 +3,7 @@ import sys
 import os
 import fnmatch
 import cPickle
+import gzip
 import compressor
 from ppd import PPD
 
@@ -24,12 +25,13 @@ def archive(ppds_directory):
     return template
 
 def compress(directory):
-    """Compresses and indexes all *.ppd files in directory returning as a string.
+    """Compresses and indexes *.ppd and *.ppd.gz in directory returning a string.
 
     The directory is walked recursively, concatenating all ppds found in a string.
-    For each, it parses and saves its name, description (in the format CUPS needs)
-    and it's position in the ppds string (start position and length) into a
-    dictionary, used as an index.
+    For each, it tests if its filename ends in *.gz. If so, opens with gzip. If
+    not, opens directly. Then, it parses and saves its name, description (in the
+    format CUPS needs) and it's position in the ppds string (start position and
+    length) into a dictionary, used as an index.
     Then, it compresses the string, adds into the dictionary as key ARCHIVE and
     returns a compressed pickle dump of it.
 
@@ -37,8 +39,11 @@ def compress(directory):
     ppds = ""
     ppds_index = {}
 
-    for ppd_path in find_files(directory, "*.ppd"):
-        ppd_file = open(ppd_path).read()
+    for ppd_path in find_files(directory, ("*.ppd", "*.ppd.gz")):
+        if ppd_path.lower().endswith(".gz"):
+            ppd_file = gzip.open(ppd_path).read()
+        else:
+            ppd_file = open(ppd_path).read()
 
         a_ppd = PPD(ppd_file)
         start = len(ppds)
@@ -68,9 +73,10 @@ def read_file_in_syspath(filename):
             continue
     raise last_exception
 
-def find_files(directory, pattern):
-    """Yields each file that matches pattern in directory."""
+def find_files(directory, patterns):
+    """Yields each file that matches any of patterns in directory."""
     abs_directory = os.path.abspath(directory)
     for root, dirnames, filenames in os.walk(abs_directory):
-        for filename in fnmatch.filter(filenames, pattern):
-            yield os.path.join(root, filename)
+        for pattern in patterns:
+            for filename in fnmatch.filter(filenames, pattern):
+                yield os.path.join(root, filename)
