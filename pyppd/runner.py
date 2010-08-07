@@ -5,7 +5,7 @@ import archiver
 
 def parse_args():
     usage = "usage: %prog [options] ppds_directory"
-    version = "%prog 0.2.0\n" \
+    version = "%prog 0.2.1\n" \
               "Copyright (c) 2010 Vitor Baptista.\n" \
               "This is free software; see the source for copying conditions.\n" \
               "There is NO warranty; not even for MERCHANTABILITY or\n" \
