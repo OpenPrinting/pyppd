@@ -40,15 +40,19 @@ def compress(directory):
     ppds_index = {}
 
     for ppd_path in find_files(directory, ("*.ppd", "*.ppd.gz")):
+        ppd_filename = os.path.basename(ppd_path)
+
         if ppd_path.lower().endswith(".gz"):
             ppd_file = gzip.open(ppd_path).read()
+            # We don't want the .gz extension in our filename
+            ppd_filename = ppd_filename[:-3]
         else:
             ppd_file = open(ppd_path).read()
 
         start = len(ppds)
         length = len(ppd_file)
         ppd_descriptions = []
-        for a_ppd in ppd.parse(ppd_file):
+        for a_ppd in ppd.parse(ppd_file, ppd_filename):
             ppd_descriptions += [str(a_ppd)]
 
         ppds_index[a_ppd.filename] = (start, length, ppd_descriptions)

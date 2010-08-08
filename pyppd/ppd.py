@@ -65,7 +65,7 @@ class PPD(object):
                                            self.deviceid)
 
 
-def parse(ppd_file):
+def parse(ppd_file, filename):
     """Parses ppd_file and returns an array with the PPDs it found.
 
     One ppd_file might result in more than one PPD. The rules are: if the file
@@ -73,14 +73,12 @@ def parse(ppd_file):
     one PPD for each "Product" entry, generating the deviceids as
     "MFG:<manufacturer>;MDL:<product>".
     """
-    filename_re     = re.search('PCFileName:\s*"(.+)"', ppd_file)
     language_re     = re.search('LanguageVersion:\s*(.+)', ppd_file)
     manufacturer_re = re.search('Manufacturer:\s*"(.+)"', ppd_file)
     nickname_re     = re.search('NickName:\s*"(.+)"', ppd_file)
     deviceid_re     = re.search('1284DeviceID:\s*"(.+)"', ppd_file)
 
     try:
-        name = str.strip(filename_re.group(1))
         language = LANGUAGES[str.strip(language_re.group(1)).lower()]
         manufacturer = str.strip(manufacturer_re.group(1))
         nickname = str.strip(nickname_re.group(1))
@@ -96,4 +94,4 @@ def parse(ppd_file):
 
             return ppds
     except:
-        raise Exception, ("Error parsing PPD file '%s'" % name)
+        raise Exception, ("Error parsing PPD file '%s'" % filename)
