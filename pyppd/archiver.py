@@ -51,7 +51,7 @@ def compress(directory):
         for a_ppd in ppd.parse(ppd_file):
             ppd_descriptions += [str(a_ppd)]
 
-        ppds_index[a_ppd.name] = (start, length, ppd_descriptions)
+        ppds_index[a_ppd.filename] = (start, length, ppd_descriptions)
         ppds += ppd_file
 
     ppds_index['ARCHIVE'] = compressor.compress(ppds)

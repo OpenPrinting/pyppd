@@ -51,16 +51,16 @@ LANGUAGES = {'afar': 'aa', 'abkhazian': 'ab', 'afrikaans': 'af',
 
 class PPD(object):
     """Represents a PostScript Description file."""
-    def __init__(self, name, language, manufacturer, nickname, deviceid):
+    def __init__(self, filename, language, manufacturer, nickname, deviceid):
         """Initializes a PPD object with the information passed."""
-        self.name = name
+        self.filename = filename
         self.language = language
         self.manufacturer = manufacturer
         self.nickname = nickname
         self.deviceid = deviceid
 
     def __str__(self):
-        return '"%s" %s "%s" "%s" "%s"' % (self.name, self.language,
+        return '"%s" %s "%s" "%s" "%s"' % (self.filename, self.language,
                                            self.manufacturer, self.nickname,
                                            self.deviceid)
 
@@ -86,13 +86,13 @@ def parse(ppd_file):
         nickname = str.strip(nickname_re.group(1))
         if deviceid_re:
             deviceid = str.strip(deviceid.group(1))
-            return [PPD(name, language, manufacturer, nickname, deviceid)]
+            return [PPD(filename, language, manufacturer, nickname, deviceid)]
         else:
             ppds = []
             for product in re.findall('Product:\s*"\((.+)\)"', ppd_file):
                 product = str.strip(product)
                 deviceid = "MFG:%s;MDL:%s;" % (manufacturer, product)
-                ppds += [PPD(name, language, manufacturer, nickname, deviceid)]
+                ppds += [PPD(filename, language, manufacturer, nickname, deviceid)]
 
             return ppds
     except:
