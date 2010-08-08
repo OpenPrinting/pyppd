@@ -5,7 +5,7 @@ import fnmatch
 import cPickle
 import gzip
 import compressor
-from ppd import PPD
+import ppd
 
 def archive(ppds_directory):
     """Returns a string with the decompressor, its dependencies and the archive.
@@ -30,8 +30,8 @@ def compress(directory):
     The directory is walked recursively, concatenating all ppds found in a string.
     For each, it tests if its filename ends in *.gz. If so, opens with gzip. If
     not, opens directly. Then, it parses and saves its name, description (in the
-    format CUPS needs) and it's position in the ppds string (start position and
-    length) into a dictionary, used as an index.
+    format CUPS needs (which can be more than one)) and it's position in the ppds
+    string (start position and length) into a dictionary, used as an index.
     Then, it compresses the string, adds into the dictionary as key ARCHIVE and
     returns a compressed pickle dump of it.
 
@@ -45,11 +45,13 @@ def compress(directory):
         else:
             ppd_file = open(ppd_path).read()
 
-        a_ppd = PPD(ppd_file)
         start = len(ppds)
         length = len(ppd_file)
-        ppds_index[a_ppd.name] = (start, length, str(a_ppd))
+        ppd_descriptions = []
+        for a_ppd in ppd.parse(ppd_file):
+            ppd_descriptions += [str(a_ppd)]
 
+        ppds_index[a_ppd.name] = (start, length, ppd_descriptions)
         ppds += ppd_file
 
     ppds_index['ARCHIVE'] = compressor.compress(ppds)

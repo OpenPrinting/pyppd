@@ -19,9 +19,10 @@ def load():
 def ls():
     binary_name = argv[0].replace('./', '')
     ppds = load()
-    for key, ppd in ppds.iteritems():
+    for key, index in ppds.iteritems():
         if key == 'ARCHIVE': continue
-        print ppd[2].replace('"', '"' + binary_name + ':', 1)
+        for ppd in index[2]:
+            print ppd.replace('"', '"' + binary_name + ':', 1)
 
 def cat(ppd):
     # Ignore driver's name, take only PPD's
