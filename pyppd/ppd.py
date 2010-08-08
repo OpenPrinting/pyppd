@@ -85,7 +85,7 @@ def parse(ppd_file):
         manufacturer = str.strip(manufacturer_re.group(1))
         nickname = str.strip(nickname_re.group(1))
         if deviceid_re:
-            deviceid = str.strip(deviceid.group(1))
+            deviceid = str.strip(deviceid_re.group(1))
             return [PPD(filename, language, manufacturer, nickname, deviceid)]
         else:
             ppds = []
