@@ -54,8 +54,9 @@ def compress(directory):
         length = len(ppd_file)
         ppd_parsed = ppd.parse(ppd_file, ppd_filename)
         while ppd_parsed[0].filename in ppds_index:
+            new_ppd_filename = "%s-%d.ppd" % (ppd_parsed[0].filename[0:-4], randint(0, 99))
             for index, a_ppd in enumerate(ppd_parsed):
-                ppd_parsed[index].filename = "%s-%d.ppd" % (a_ppd.filename[0:-4], randint(0,99))
+                ppd_parsed[index].filename = new_ppd_filename
 
         ppd_descriptions = map(str, ppd_parsed)
         ppds_index[ppd_parsed[0].filename] = (start, length, ppd_descriptions)
