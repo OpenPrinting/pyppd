@@ -4,6 +4,7 @@ import os
 import fnmatch
 import cPickle
 import gzip
+from random import randint
 import compressor
 import ppd
 
@@ -51,11 +52,13 @@ def compress(directory):
 
         start = len(ppds)
         length = len(ppd_file)
-        ppd_descriptions = []
-        for a_ppd in ppd.parse(ppd_file, ppd_filename):
-            ppd_descriptions += [str(a_ppd)]
+        ppd_parsed = ppd.parse(ppd_file, ppd_filename)
+        while ppd_parsed[0].filename in ppds_index:
+            for index, a_ppd in enumerate(ppd_parsed):
+                ppd_parsed[index].filename = "%s-%d.ppd" % (a_ppd.filename[0:-4], randint(0,99))
 
-        ppds_index[a_ppd.filename] = (start, length, ppd_descriptions)
+        ppd_descriptions = map(str, ppd_parsed)
+        ppds_index[ppd_parsed[0].filename] = (start, length, ppd_descriptions)
         ppds += ppd_file
 
     ppds_index['ARCHIVE'] = compressor.compress(ppds)

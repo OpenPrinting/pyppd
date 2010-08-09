@@ -8,5 +8,3 @@ ISSUES
   stderr.
 * Add logging facilities
 * Add unit tests
-* Check if the PPD filename don't exists in the index before inserting it, so
-  we avoid overwritting an existing entry.
