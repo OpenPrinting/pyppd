@@ -19,9 +19,9 @@ def load():
 def ls():
     binary_name = argv[0].replace('./', '')
     ppds = load()
-    for key, index in ppds.iteritems():
+    for key, value in ppds.iteritems():
         if key == 'ARCHIVE': continue
-        for ppd in index[2]:
+        for ppd in value[2]:
             print ppd.replace('"', '"' + binary_name + ':', 1)
 
 def cat(ppd):
