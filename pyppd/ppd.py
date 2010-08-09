@@ -68,30 +68,36 @@ class PPD(object):
 def parse(ppd_file, filename):
     """Parses ppd_file and returns an array with the PPDs it found.
 
-    One ppd_file might result in more than one PPD. The rules are: if the file
-    has an "1284DeviceID" entry, returns only one PPD with it. If not, returns
-    one PPD for each "Product" entry, generating the deviceids as
-    "MFG:<manufacturer>;MDL:<product>".
+    One ppd_file might result in more than one PPD. The rules are: return an
+    PPD for each "1284DeviceID" entry, and one for each "Product" line, if it
+    creates an unique (Manufacturer, Product) DeviceID.
     """
     language_re     = re.search('LanguageVersion:\s*(.+)', ppd_file)
     manufacturer_re = re.search('Manufacturer:\s*"(.+)"', ppd_file)
     nickname_re     = re.search('NickName:\s*"(.+)"', ppd_file)
-    deviceid_re     = re.search('1284DeviceID:\s*"(.+)"', ppd_file)
+    deviceids       = re.findall('1284DeviceID:\s*"(.+)"', ppd_file)
 
     try:
         language = LANGUAGES[str.strip(language_re.group(1)).lower()]
         manufacturer = str.strip(manufacturer_re.group(1))
         nickname = str.strip(nickname_re.group(1))
-        if deviceid_re:
-            deviceid = str.strip(deviceid_re.group(1))
-            return [PPD(filename, language, manufacturer, nickname, deviceid)]
-        else:
-            ppds = []
-            for product in re.findall('Product:\s*"\((.+)\)"', ppd_file):
-                product = str.strip(product)
-                deviceid = "MFG:%s;MDL:%s;" % (manufacturer, product)
-                ppds += [PPD(filename, language, manufacturer, nickname, deviceid)]
+        ppds = []
+        models = []
+        if deviceids:
+            ppds = [PPD(filename, language, manufacturer, nickname, deviceid.strip()) for deviceid in deviceids]
+            for deviceid in deviceids:
+                models += re.findall(".*(?:MODEL|MDL):(.*?);.*", deviceid, re.I)
 
-            return ppds
+        for product in re.findall('Product:\s*"\((.+)\)"', ppd_file):
+            product = str.strip(product)
+
+            # Don't add a new entry if there's already one for the same product model
+            if product in models:
+                continue
+
+            deviceid = "MFG:%s;MDL:%s;" % (manufacturer, product)
+            ppds += [PPD(filename, language, manufacturer, nickname, deviceid)]
+
+        return ppds
     except:
         raise Exception, ("Error parsing PPD file '%s'" % filename)
