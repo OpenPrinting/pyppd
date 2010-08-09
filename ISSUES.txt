@@ -1,8 +1,6 @@
 ISSUES
 ======
 
-* ``setup.py install`` should link pyppd to /usr/lib/cups/driver, so CUPS'll
-  begin using it.
 * If ``pyppd`` does not find PPDs, issue a warning during compression run and
   let ``pyppd-ppdfile list`` do not output anything on stdout and a warning on
   stderr.
