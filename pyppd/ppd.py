@@ -74,10 +74,10 @@ def parse(ppd_file, filename):
     creates an unique (Manufacturer, Product) DeviceID.
     """
     logging.debug('Parsing %s.' % filename)
-    language_re     = re.search('LanguageVersion:\s*(.+)', ppd_file)
-    manufacturer_re = re.search('Manufacturer:\s*"(.+)"', ppd_file)
-    nickname_re     = re.search('NickName:\s*"(.+)"', ppd_file)
-    deviceids       = re.findall('1284DeviceID:\s*"(.+)"', ppd_file)
+    language_re     = re.search('\*LanguageVersion:\s*(.+)', ppd_file)
+    manufacturer_re = re.search('\*Manufacturer:\s*"(.+)"', ppd_file)
+    nickname_re     = re.search('\*NickName:\s*"(.+)"', ppd_file)
+    deviceids       = re.findall('\*1284DeviceID:\s*"(.+)"', ppd_file)
 
     try:
         language = LANGUAGES[str.strip(language_re.group(1)).lower()]
@@ -94,7 +94,7 @@ def parse(ppd_file, filename):
                 logging.debug('1284DeviceID: "%s".' % deviceid)
                 models += re.findall(".*(?:MODEL|MDL):(.*?);.*", deviceid, re.I)
 
-        for product in re.findall('Product:\s*"\((.+)\)"', ppd_file):
+        for product in re.findall('\*Product:\s*"\((.+)\)"', ppd_file):
             product = str.strip(product)
 
             # Don't add a new entry if there's already one for the same product model

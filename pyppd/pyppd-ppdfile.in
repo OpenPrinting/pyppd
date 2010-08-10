@@ -9,6 +9,7 @@ from sys import argv
 import base64
 import cPickle
 from cStringIO import StringIO
+from os.path import basename
 
 def load():
     ppds_compressed = base64.b64decode(ppds_compressed_b64)
@@ -17,7 +18,7 @@ def load():
     return ppds
 
 def ls():
-    binary_name = argv[0].replace('./', '')
+    binary_name = basename(argv[0])
     ppds = load()
     for key, value in ppds.iteritems():
         if key == 'ARCHIVE': continue
