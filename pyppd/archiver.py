@@ -65,7 +65,7 @@ def compress(directory):
 
         ppd_parsed = ppd.parse(ppd_file, ppd_filename)
         ppd_descriptions = map(str, ppd_parsed)
-        ppds_index[ppd_parsed[0].filename] = (start, length, ppd_descriptions)
+        ppds_index[ppd_parsed[0].uri] = (start, length, ppd_descriptions)
         logging.debug('Adding %d entry(ies): %s.' % (len(ppd_descriptions), map(str, ppd_parsed)))
         ppds += ppd_file
 

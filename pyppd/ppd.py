@@ -52,16 +52,16 @@ LANGUAGES = {'afar': 'aa', 'abkhazian': 'ab', 'afrikaans': 'af',
 
 class PPD(object):
     """Represents a PostScript Description file."""
-    def __init__(self, filename, language, manufacturer, nickname, deviceid):
+    def __init__(self, uri, language, manufacturer, nickname, deviceid):
         """Initializes a PPD object with the information passed."""
-        self.filename = filename
+        self.uri = uri
         self.language = language
         self.manufacturer = manufacturer
         self.nickname = nickname
         self.deviceid = deviceid
 
     def __str__(self):
-        return '"%s" %s "%s" "%s" "%s"' % (self.filename, self.language,
+        return '"%s" %s "%s" "%s" "%s"' % (self.uri, self.language,
                                            self.manufacturer, self.nickname,
                                            self.deviceid)
 
