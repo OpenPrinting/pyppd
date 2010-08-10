@@ -1,9 +1,6 @@
 ISSUES
 ======
 
-* If ``pyppd`` does not find PPDs, issue a warning during compression run and
-  let ``pyppd-ppdfile list`` do not output anything on stdout and a warning on
-  stderr.
 * Add unit tests
 * When testing if the PPD generated from the *Product line already exists in a
   *1284DeviceID line, we do a case-sensitive test. I think it should be case-
