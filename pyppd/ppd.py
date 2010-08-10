@@ -1,4 +1,5 @@
 import re
+import logging
 
 LANGUAGES = {'afar': 'aa', 'abkhazian': 'ab', 'afrikaans': 'af',
              'amharic': 'am', 'arabic': 'ar', 'assamese': 'as', 
@@ -72,6 +73,7 @@ def parse(ppd_file, filename):
     PPD for each "1284DeviceID" entry, and one for each "Product" line, if it
     creates an unique (Manufacturer, Product) DeviceID.
     """
+    logging.debug('Parsing %s.' % filename)
     language_re     = re.search('LanguageVersion:\s*(.+)', ppd_file)
     manufacturer_re = re.search('Manufacturer:\s*"(.+)"', ppd_file)
     nickname_re     = re.search('NickName:\s*"(.+)"', ppd_file)
@@ -81,11 +83,15 @@ def parse(ppd_file, filename):
         language = LANGUAGES[str.strip(language_re.group(1)).lower()]
         manufacturer = str.strip(manufacturer_re.group(1))
         nickname = str.strip(nickname_re.group(1))
+        logging.debug('Language: "%s", Manufacturer: "%s", Nickname: "%s".' %
+                      (language, manufacturer, nickname))
         ppds = []
         models = []
         if deviceids:
-            ppds = [PPD(filename, language, manufacturer, nickname, deviceid.strip()) for deviceid in deviceids]
+            ppds = [PPD(filename, language, manufacturer, nickname, deviceid.strip())
+                    for deviceid in deviceids]
             for deviceid in deviceids:
+                logging.debug('1284DeviceID: "%s".' % deviceid)
                 models += re.findall(".*(?:MODEL|MDL):(.*?);.*", deviceid, re.I)
 
         for product in re.findall('Product:\s*"\((.+)\)"', ppd_file):
@@ -93,8 +99,11 @@ def parse(ppd_file, filename):
 
             # Don't add a new entry if there's already one for the same product model
             if product in models:
+                logging.debug('Ignoring already found *Product: "%s".' %
+                              product)
                 continue
 
+            logging.debug('Product: "%s"' % product)
             deviceid = "MFG:%s;MDL:%s;" % (manufacturer, product)
             ppds += [PPD(filename, language, manufacturer, nickname, deviceid)]
 
