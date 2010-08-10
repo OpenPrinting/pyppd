@@ -16,8 +16,9 @@ def parse_args():
     parser = OptionParser(usage=usage,
                           version=version)
     parser.add_option("-v", "--verbose",
-                      action="store_const", const=1, dest="verbose",
-                      help="run verbosely")
+                      action="count", dest="verbosity",
+                      help="run verbosely (can be supplied multiple times to " \
+                           "increase verbosity)")
     parser.add_option("-d", "--debug",
                       action="store_const", const=2, dest="verbose",
                       help="print debug messages")
@@ -34,38 +35,28 @@ def parse_args():
 
     return (options, args)
 
-def configure_logging(log_file, verbosity):
-    """Configures logging to stdout and log_file
+def configure_logging(verbosity):
+    """Configures logging verbosity
 
     To stdout, we only WARNING of worse messages in a simpler format. To the
     file, we save every log message with its time, level, module and method.
     We also rotate the log_file, removing old entries when it reaches 2 MB.
     """
-    logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)
 
-    console = logging.StreamHandler()
     if verbosity == 1:
-        console.setLevel(logging.INFO)
+        level = logging.INFO
     elif verbosity == 2:
-        console.setLevel(logging.DEBUG)
+        level = logging.DEBUG
     else:
-        console.setLevel(logging.WARNING)
+        level = logging.WARNING
 
-    formatter = logging.Formatter('[%(levelname)s] %(message)s')
-    console.setFormatter(formatter)
-    logger.addHandler(console)
+    formatter = '[%(levelname)s] %(module)s.%(funcName)s(): %(message)s'
 
-    handler = logging.handlers.RotatingFileHandler(log_file,
-                    maxBytes=2*1024*1024)
-    formatter = logging.Formatter('%(asctime)s [%(levelname)s] ' \
-                                  '%(module)s.%(funcName)s(): %(message)s')
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
+    logging.basicConfig(level=level, format=formatter)
 
 def run():
     (options, args) = parse_args()
-    configure_logging('pyppd.log', options.verbose)
+    configure_logging(options.verbosity)
     ppds_directory = args[0]
     
     logging.info('Archiving folder "%s".' % ppds_directory)
