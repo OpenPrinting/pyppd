@@ -40,7 +40,7 @@ def cat(ppd):
 def main():
     usage = "usage: %prog list\n" \
             "       %prog cat URI"
-    version = "%prog 0.4.1\n" \
+    version = "%prog 0.4.2\n" \
               "Copyright (c) 2010 Vitor Baptista.\n" \
               "This is free software; see the source for copying conditions.\n" \
               "There is NO warranty; not even for MERCHANTABILITY or\n" \
