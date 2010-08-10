@@ -46,9 +46,11 @@ def compress(directory):
     """
     ppds = ""
     ppds_index = {}
+    abs_directory = os.path.abspath(directory)
 
     for ppd_path in find_files(directory, ("*.ppd", "*.ppd.gz")):
-        ppd_filename = os.path.basename(ppd_path)
+        # Remove 'directory/' from the filename
+        ppd_filename = ppd_path[len(abs_directory)+1:]
 
         if ppd_path.lower().endswith(".gz"):
             ppd_file = gzip.open(ppd_path).read()
@@ -62,13 +64,6 @@ def compress(directory):
         logging.debug('Found %s (%d bytes).' % (ppd_path, length))
 
         ppd_parsed = ppd.parse(ppd_file, ppd_filename)
-        while ppd_parsed[0].filename in ppds_index:
-            new_ppd_filename = "%s-%d.ppd" % (ppd_parsed[0].filename[0:-4], randint(0, 99))
-            logging.debug('Renaming %s -> %s (found homonymous PPD).' %
-                          (ppd_filename, new_ppd_filename))
-            for index, a_ppd in enumerate(ppd_parsed):
-                ppd_parsed[index].filename = new_ppd_filename
-
         ppd_descriptions = map(str, ppd_parsed)
         ppds_index[ppd_parsed[0].filename] = (start, length, ppd_descriptions)
         logging.debug('Adding %d entry(ies): %s.' % (len(ppd_descriptions), map(str, ppd_parsed)))
