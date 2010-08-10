@@ -21,14 +21,14 @@ def archive(ppds_directory):
     if not ppds_compressed:
         return None
 
-    ppds_encoded = base64.b64encode(ppds_compressed)
+    ppds_compressed_b64 = base64.b64encode(ppds_compressed)
 
     logging.info('Populating template.')
     template = read_file_in_syspath("pyppd/pyppd-ppdfile.in")
     compressor_py = read_file_in_syspath("pyppd/compressor.py")
 
     template = template.replace("@compressor@", compressor_py)
-    template = template.replace("@ppds_compressed_b64@", ppds_compressed)
+    template = template.replace("@ppds_compressed_b64@", ppds_compressed_b64)
 
     return template
 
