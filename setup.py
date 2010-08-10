@@ -30,4 +30,11 @@ setup(
     description='A CUPS PostScript Printer Driver\'s compressor and generator',
     long_description=open('README.txt').read(),
     cmdclass={'sdist': sdist},
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Intended Audience :: System Administrators',
+        'Operating System :: POSIX',
+        'License :: OSI Approved :: GNU General Public License (GPL)',
+        'Topic :: Printing',
+        ],
 )
