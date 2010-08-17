@@ -53,3 +53,14 @@ the PPD URIs will follow the new name:
   $ ./laserstar list
 
   laserstar:LaserStar/LaserStar-XX100.ppd
+
+Contributors
+------------
+
+* **Till Kamppeter** - Original idea, mentoring and feedback. User #0.
+
+* **Hin-Tak Leung** - Lots of technical suggestions.
+
+* **Flávio Ribeiro** and **Diógenes Fernandes** - Refactorings and general Python's best practices tips.
+
+* **Google's OSPO** - Initial funding at GSoC 2010.
