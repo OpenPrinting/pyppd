@@ -38,3 +38,18 @@ And, for reading a PPD from the archive, simply do:
 
 For CUPS to be able to use your newly-created archive, copy ``pyppd-ppdfile``
 to ``/usr/lib/cups/driver/`` and you're done.
+
+The generated ``pyppd-ppdfile`` can be arbitrarily renamed, so that more than
+one packed repository can be installed on one system. This can be useful if
+you need a better performance, be it in time or memory usage. Note that also
+the PPD URIs will follow the new name:
+
+  ./pyppd-ppdfile list
+
+  pyppd-ppdfile:LasterStar/LaserStar-XX100.ppd
+
+  mv pyppd-ppdfile laserstar
+
+  ./laserstar list
+
+  laserstar:LaserStar/LaserStar-XX100.ppd
