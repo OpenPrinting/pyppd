@@ -14,7 +14,7 @@ class sdist(_sdist):
                 git2changes.run(f)
         except ImportError:
             pass
-        
+
         _sdist.run(self)
 
 setup(
