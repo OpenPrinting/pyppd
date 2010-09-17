@@ -28,7 +28,7 @@ class Commit:
         try:
             while True:
                 commit_line = log_array.pop().strip()
-                if (commit_line == "" or 
+                if (commit_line == "" or
                     commit_line.find('Signed-off-by') != -1 or
                     commit_line.find('git-svn-id') != -1):
                     commit_line = log_array.pop()
@@ -63,6 +63,7 @@ class Commit:
         message_with_files = '* ' + ', '.join(self.changed_files) + ': ' + self.message
         message_with_files = self.__break_string(message_with_files, 78)
         message_with_files = '  ' + message_with_files.replace('\n', '\n  ')
+        if message_with_files[-1] == ' ': message_with_files = message_with_files[0:-1]
         return message_with_files
 
 
