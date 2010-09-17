@@ -28,6 +28,8 @@ def ls():
 def cat(ppd):
     # Ignore driver's name, take only PPD's
     ppd = ppd.split(":")[-1]
+    # Remove also the index
+    ppd = "0/" + ppd[ppd.find("/")+1:]
 
     ppds = load()
     ppds['ARCHIVE'] = StringIO(decompress(ppds['ARCHIVE']))
