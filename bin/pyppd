@@ -2,7 +2,7 @@
 
 from pyppd import runner
 try:
-runner.run()
+    runner.run()
 except KeyboardInterrupt:
     # We don't want a KeyboardInterrupt throwing a traceback into stdout.
     pass
