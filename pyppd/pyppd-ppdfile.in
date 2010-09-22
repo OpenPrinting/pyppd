@@ -23,7 +23,13 @@ def ls():
     for key, value in ppds.iteritems():
         if key == 'ARCHIVE': continue
         for ppd in value[2]:
-            print ppd.replace('"', '"' + binary_name + ':', 1)
+            try:
+                print ppd.replace('"', '"' + binary_name + ':', 1)
+            except IOError:
+                # Errors like broken pipes (program which takes the standard
+                # output terminates before this program terminates) should not
+                # generate a traceback.
+                exit(0)
 
 def cat(ppd):
     # Ignore driver's name, take only PPD's
@@ -63,7 +69,13 @@ def main():
         ppd = cat(args[1])
         if not ppd:
             parser.error("Printer '%s' does not have default driver!" % args[1])
-        print ppd
+        try:
+            print ppd
+        except IOError:
+            # Errors like broken pipes (program which takes the standard output
+            # terminates before this program terminates) should not generate a
+            # traceback.
+            exit(0)
     else:
         parser.error("argument " + args[0] + " invalid")
 
@@ -73,7 +85,7 @@ ppds_compressed_b64 = "@ppds_compressed_b64@"
 if __name__ == "__main__":
     try:
         main()
-    except (IOError, KeyboardInterrupt):
-        # We don't want neither IOError nor KeyboardInterrupt throwing a
+    except KeyboardInterrupt:
+        # We don't want a KeyboardInterrupt throwing a
         # traceback into stdout.
         pass
