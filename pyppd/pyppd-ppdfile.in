@@ -10,6 +10,7 @@ import base64
 import cPickle
 from cStringIO import StringIO
 from os.path import basename
+from errno import EPIPE
 
 def load():
     ppds_compressed = base64.b64decode(ppds_compressed_b64)
@@ -25,11 +26,12 @@ def ls():
         for ppd in value[2]:
             try:
                 print ppd.replace('"', '"' + binary_name + ':', 1)
-            except IOError:
+            except IOError, e:
                 # Errors like broken pipes (program which takes the standard
                 # output terminates before this program terminates) should not
                 # generate a traceback.
-                exit(0)
+                if e.errno == EPIPE: exit(0)
+                raise
 
 def cat(ppd):
     # Ignore driver's name, take only PPD's
@@ -71,11 +73,12 @@ def main():
             parser.error("Printer '%s' does not have default driver!" % args[1])
         try:
             print ppd
-        except IOError:
+        except IOError, e:
             # Errors like broken pipes (program which takes the standard output
             # terminates before this program terminates) should not generate a
             # traceback.
-            exit(0)
+            if e.errno == EPIPE: exit(0)
+            raise
     else:
         parser.error("argument " + args[0] + " invalid")
 
