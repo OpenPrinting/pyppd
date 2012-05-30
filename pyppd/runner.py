@@ -4,7 +4,7 @@ import errno
 import logging
 import logging.handlers
 from optparse import OptionParser
-import archiver
+import pyppd.archiver
 
 def parse_args():
     usage = "usage: %prog [options] ppds_directory"
@@ -60,7 +60,7 @@ def run():
     ppds_directory = args[0]
 
     logging.info('Archiving folder "%s".' % ppds_directory)
-    archive = archiver.archive(ppds_directory)
+    archive = pyppd.archiver.archive(ppds_directory)
     if not archive:
         exit(errno.ENOENT)
 

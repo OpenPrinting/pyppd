@@ -2,12 +2,16 @@ import base64
 import sys
 import os
 import fnmatch
-import cPickle
 import gzip
 import logging
 from random import randint
-import compressor
-import ppd
+import pyppd.compressor
+import pyppd.ppd
+
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
 
 def archive(ppds_directory):
     """Returns a string with the decompressor, its dependencies and the archive.
@@ -63,7 +67,7 @@ def compress(directory):
         length = len(ppd_file)
         logging.debug('Found %s (%d bytes).' % (ppd_path, length))
 
-        ppd_parsed = ppd.parse(ppd_file, ppd_filename)
+        ppd_parsed = pyppd.ppd.parse(ppd_file, ppd_filename)
         ppd_descriptions = map(str, ppd_parsed)
         ppds_index[ppd_parsed[0].uri] = (start, length, ppd_descriptions)
         logging.debug('Adding %d entry(ies): %s.' % (len(ppd_descriptions), map(str, ppd_parsed)))
@@ -74,9 +78,9 @@ def compress(directory):
         return None
 
     logging.info('Compressing archive.')
-    ppds_index['ARCHIVE'] = compressor.compress(ppds)
+    ppds_index['ARCHIVE'] = pyppd.compressor.compress(ppds)
     logging.info('Generating and compressing pickle dump.')
-    ppds_pickle = compressor.compress(cPickle.dumps(ppds_index))
+    ppds_pickle = pyppd.compressor.compress(pickle.dumps(ppds_index))
 
 
     return ppds_pickle

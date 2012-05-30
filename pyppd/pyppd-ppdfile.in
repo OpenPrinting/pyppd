@@ -7,15 +7,22 @@
 from optparse import OptionParser
 from sys import argv
 import base64
-import cPickle
-from cStringIO import StringIO
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from io import StringIO
+
 from os.path import basename
 from errno import EPIPE
 
 def load():
     ppds_compressed = base64.b64decode(ppds_compressed_b64)
     ppds_decompressed = decompress(ppds_compressed)
-    ppds = cPickle.loads(ppds_decompressed)
+    ppds = pickle.loads(ppds_decompressed)
     return ppds
 
 def ls():
