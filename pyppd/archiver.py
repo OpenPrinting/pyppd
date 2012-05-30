@@ -68,9 +68,9 @@ def compress(directory):
         logging.debug('Found %s (%d bytes).' % (ppd_path, length))
 
         ppd_parsed = pyppd.ppd.parse(ppd_file, ppd_filename)
-        ppd_descriptions = map(str, ppd_parsed)
+        ppd_descriptions = list(map(str, ppd_parsed))
         ppds_index[ppd_parsed[0].uri] = (start, length, ppd_descriptions)
-        logging.debug('Adding %d entry(ies): %s.' % (len(ppd_descriptions), map(str, ppd_parsed)))
+        logging.debug('Adding %d entry(ies): %s.' % (len(ppd_descriptions), ppd_descriptions))
         ppds += ppd_file
 
     if not ppds:

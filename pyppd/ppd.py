@@ -113,4 +113,4 @@ def parse(ppd_file, filename):
 
         return ppds
     except:
-        raise Exception, ("Error parsing PPD file '%s'" % filename)
+        raise Exception("Error parsing PPD file '%s'" % filename)

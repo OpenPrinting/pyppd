@@ -9,7 +9,7 @@ class sdist(_sdist):
             import sys
             sys.path.append("contrib")
             import git2changes
-            print 'generating CHANGES.txt'
+            print('generating CHANGES.txt')
             with open('CHANGES.txt', 'w+') as f:
                 git2changes.run(f)
         except ImportError:
