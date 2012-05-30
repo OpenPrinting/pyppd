@@ -31,8 +31,8 @@ def archive(ppds_directory):
     template = read_file_in_syspath("pyppd/pyppd-ppdfile.in")
     compressor_py = read_file_in_syspath("pyppd/compressor.py")
 
-    template = template.replace("@compressor@", compressor_py)
-    template = template.replace("@ppds_compressed_b64@", ppds_compressed_b64)
+    template = template.replace(b"@compressor@", compressor_py)
+    template = template.replace(b"@ppds_compressed_b64@", ppds_compressed_b64)
 
     return template
 
@@ -48,7 +48,7 @@ def compress(directory):
     returns a compressed pickle dump of it.
 
     """
-    ppds = ""
+    ppds = b""
     ppds_index = {}
     abs_directory = os.path.abspath(directory)
 
@@ -61,14 +61,14 @@ def compress(directory):
             # We don't want the .gz extension in our filename
             ppd_filename = ppd_filename[:-3]
         else:
-            ppd_file = open(ppd_path).read()
+            ppd_file = open(ppd_path, 'rb').read()
 
         start = len(ppds)
         length = len(ppd_file)
         logging.debug('Found %s (%d bytes).' % (ppd_path, length))
 
         ppd_parsed = pyppd.ppd.parse(ppd_file, ppd_filename)
-        ppd_descriptions = list(map(str, ppd_parsed))
+        ppd_descriptions = [p.__str__() for p in ppd_parsed]
         ppds_index[ppd_parsed[0].uri] = (start, length, ppd_descriptions)
         logging.debug('Adding %d entry(ies): %s.' % (len(ppd_descriptions), ppd_descriptions))
         ppds += ppd_file
@@ -95,7 +95,7 @@ def read_file_in_syspath(filename):
     last_exception = None
     for path in sys.path:
         try:
-            return open(path + "/" + filename).read()
+            return open(path + "/" + filename, 'rb').read()
         except IOError as ex:
             last_exception = ex
             continue

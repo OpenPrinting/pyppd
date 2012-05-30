@@ -4,6 +4,8 @@
 @compressor@
 # compressor.py
 
+import os
+import sys
 from optparse import OptionParser
 from sys import argv
 import base64
@@ -11,10 +13,7 @@ try:
     import cPickle as pickle
 except ImportError:
     import pickle
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from io import StringIO
+from io import BytesIO
 
 from os.path import basename
 from errno import EPIPE
@@ -47,7 +46,7 @@ def cat(ppd):
     ppd = "0/" + ppd[ppd.find("/")+1:]
 
     ppds = load()
-    ppds['ARCHIVE'] = StringIO(decompress(ppds['ARCHIVE']))
+    ppds['ARCHIVE'] = BytesIO(decompress(ppds['ARCHIVE']))
 
     if ppd in ppds:
         start = ppds[ppd][0]
@@ -79,7 +78,12 @@ def main():
         if not ppd:
             parser.error("Printer '%s' does not have default driver!" % args[1])
         try:
-            print(ppd)
+            # avoid any assumption of encoding or system locale; just print the
+            # bytes of the PPD as they are
+            if sys.version_info.major < 3:
+                sys.stdout.write(ppd)
+            else:
+                sys.stdout.buffer.write(ppd)
         except IOError as e:
             # Errors like broken pipes (program which takes the standard output
             # terminates before this program terminates) should not generate a
@@ -90,7 +94,7 @@ def main():
         parser.error("argument " + args[0] + " invalid")
 
 # PPDs Archive
-ppds_compressed_b64 = "@ppds_compressed_b64@"
+ppds_compressed_b64 = b"@ppds_compressed_b64@"
 
 if __name__ == "__main__":
     try:

@@ -65,7 +65,7 @@ def run():
         exit(errno.ENOENT)
 
     logging.info('Writing archive to "%s".' % options.output)
-    output = open(options.output, "w+")
+    output = open(options.output, "wb+")
     output.write(archive)
     output.close()
 

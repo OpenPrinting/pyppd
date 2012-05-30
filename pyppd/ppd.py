@@ -74,15 +74,15 @@ def parse(ppd_file, filename):
     creates an unique (Manufacturer, Product) DeviceID.
     """
     logging.debug('Parsing %s.' % filename)
-    language_re     = re.search('\*LanguageVersion:\s*(.+)', ppd_file)
-    manufacturer_re = re.search('\*Manufacturer:\s*"(.+)"', ppd_file)
-    nickname_re     = re.search('\*NickName:\s*"(.+)"', ppd_file)
-    deviceids       = re.findall('\*1284DeviceID:\s*"(.+)"', ppd_file)
+    language_re     = re.search(b'\*LanguageVersion:\s*(.+)', ppd_file)
+    manufacturer_re = re.search(b'\*Manufacturer:\s*"(.+)"', ppd_file)
+    nickname_re     = re.search(b'\*NickName:\s*"(.+)"', ppd_file)
+    deviceids       = re.findall(b'\*1284DeviceID:\s*"(.+)"', ppd_file)
 
     try:
-        language = LANGUAGES[str.strip(language_re.group(1)).lower()]
-        manufacturer = str.strip(manufacturer_re.group(1))
-        nickname = str.strip(nickname_re.group(1))
+        language = LANGUAGES[language_re.group(1).decode('UTF-8', errors='replace').strip().lower()]
+        manufacturer = manufacturer_re.group(1).strip().decode('UTF-8', errors='replace')
+        nickname = nickname_re.group(1).strip().decode('UTF-8', errors='replace')
         logging.debug('Language: "%s", Manufacturer: "%s", Nickname: "%s".' %
                       (language, manufacturer, nickname))
         ppds = []
@@ -90,14 +90,15 @@ def parse(ppd_file, filename):
         line = 0
         if deviceids:
             for deviceid in deviceids:
+                deviceid = deviceid.decode('UTF-8', errors='replace')
                 logging.debug('1284DeviceID: "%s".' % deviceid)
                 uri = "%d/%s" % (line, filename)
                 ppds += [PPD(uri, language, manufacturer, nickname, deviceid.strip())]
                 models += re.findall(".*(?:MODEL|MDL):(.*?);.*", deviceid, re.I)
                 line += 1
 
-        for product in re.findall('\*Product:\s*"\((.+)\)"', ppd_file):
-            product = str.strip(product)
+        for product in re.findall(b'\*Product:\s*"\((.+)\)"', ppd_file):
+            product = product.strip().decode('UTF-8', errors='replace')
 
             # Don't add a new entry if there's already one for the same product model
             if product in models:
