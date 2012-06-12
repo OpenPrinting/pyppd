@@ -28,8 +28,8 @@ setup(
     url='http://gitorious.org/vitorbaptista/pyppd/',
     license='GPLv3',
     description='A CUPS PostScript Printer Driver\'s compressor and generator',
-    long_description=open('README.txt').read() + "\n" +
-                     open('ISSUES.txt').read(),
+    long_description=open('README.txt', 'rb').read().decode('UTF-8') + "\n" +
+                     open('ISSUES.txt', 'rb').read().decode('UTF-8'),
     cmdclass={'sdist': sdist},
     classifiers=[
         'Development Status :: 4 - Beta',
