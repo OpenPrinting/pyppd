@@ -28,7 +28,7 @@ setup(
     url='http://github.com/vitorbaptista/pyppd/',
     license='MIT',
     description='A CUPS PostScript Printer Driver\'s compressor and generator',
-    long_description=open('README.txt', 'rb').read().decode('UTF-8') + "\n" +
+    long_description=open('README', 'rb').read().decode('UTF-8') + "\n" +
                      open('ISSUES.txt', 'rb').read().decode('UTF-8'),
     cmdclass={'sdist': sdist},
     classifiers=[
