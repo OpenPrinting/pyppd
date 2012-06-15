@@ -15,7 +15,7 @@ Or download the source package, uncompress, and run as root:
 
   # python setup.py install
 
-It depends on Python 2.x (http://www.python.org) and XZ Utils
+It depends on Python 2.x or 3.x (http://www.python.org) and XZ Utils
 (http://tukaani.org/xz/).
 
 Usage
@@ -27,8 +27,9 @@ have subfolders), then run:
 
   $ pyppd /path/to/your/ppd/folder
 
-It'll create ``pyppd-ppdfile`` in your current folder. You can test it by
-running:
+It'll create ``pyppd-ppdfile`` in your current folder. This executable only
+works with the same Python version that you used to generate it. You can test
+it by running:
 
   $ ./pyppd-ppdfile list
 
@@ -60,6 +61,8 @@ Contributors
 * **Till Kamppeter** - Original idea, mentoring and feedback. User #0.
 
 * **Hin-Tak Leung** - Lots of technical suggestions.
+
+* **Martin Pitt** - Python 3 port.
 
 * **Flávio Ribeiro** and **Diógenes Fernandes** - Refactorings and general Python's best practices tips.
 
