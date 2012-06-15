@@ -26,7 +26,7 @@ setup(
     package_data={'pyppd': ['*.in']},
     scripts=['bin/pyppd'],
     url='http://gitorious.org/vitorbaptista/pyppd/',
-    license='GPLv3',
+    license='MIT',
     description='A CUPS PostScript Printer Driver\'s compressor and generator',
     long_description=open('README.txt', 'rb').read().decode('UTF-8') + "\n" +
                      open('ISSUES.txt', 'rb').read().decode('UTF-8'),
@@ -35,7 +35,7 @@ setup(
         'Development Status :: 4 - Beta',
         'Intended Audience :: System Administrators',
         'Operating System :: POSIX',
-        'License :: OSI Approved :: GNU General Public License (GPL)',
+        'License :: OSI Approved :: MIT License',
         'Topic :: Printing',
         ],
 )
