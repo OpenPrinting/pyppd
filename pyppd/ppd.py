@@ -73,6 +73,13 @@ def parse(ppd_file, filename):
     PPD for each "1284DeviceID" entry, and one for each "Product" line, if it
     creates an unique (Manufacturer, Product) DeviceID.
     """
+
+    def standardize(model_name):
+        # Consider it the same model if the product name differs only by
+        # upper/lower case and by the presence/absence of the manufacturer
+        # name
+        return model_name.lower().replace("Hewlett-Packard ".lower(), "").replace("%s " % manufacturer.lower(), "").strip()
+
     logging.debug('Parsing %s.' % filename)
     language_re     = re.search(b'\*LanguageVersion:\s*(.+)', ppd_file)
     manufacturer_re = re.search(b'\*Manufacturer:\s*"(.+)"', ppd_file)
@@ -87,30 +94,61 @@ def parse(ppd_file, filename):
                       (language, manufacturer, nickname))
         ppds = []
         models = []
+        drventry = None
         line = 0
+        num_device_ids = 0
+        num_products = 0
         if deviceids:
             for deviceid in deviceids:
                 deviceid = deviceid.decode('UTF-8', errors='replace')
                 logging.debug('1284DeviceID: "%s".' % deviceid)
+                if (not deviceid.endswith(";")):
+                    deviceid += ";"
                 uri = "%d/%s" % (line, filename)
-                ppds += [PPD(uri, language, manufacturer, nickname, deviceid.strip())]
-                models += re.findall(".*(?:MODEL|MDL):(.*?);.*", deviceid, re.I)
-                line += 1
+                # Save a DRV field (from Foomatic) and use it for all entries
+                # of this PPD
+                newdrventry = re.findall(".*DRV:\s*(.*?)\s*;.*", deviceid, re.I)
+                if (len(newdrventry) > 0):
+                    drventry = newdrventry[0]
+                elif (drventry != None):
+                    deviceid += "DRV:%s;" % drventry
+                newmodels = re.findall(".*(?:MODEL|MDL):\s*(.*?)\s*;.*", deviceid, re.I)
+                if (newmodels):
+                    newmodels = list(map(standardize, newmodels))
+                if (len(newmodels) > 0):
+                    # Consider only IDs with a MODEL/MDL field
+                    ppds += [PPD(uri, language, manufacturer, nickname, deviceid.strip())]
+                    models += newmodels
+                    num_device_ids += 1
+                    line += 1
 
-        for product in re.findall(b'\*Product:\s*"\((.+)\)"', ppd_file):
+        for product in re.findall(b'\*Product:\s*"\(\s*(.+?)\s*\)"', ppd_file):
             product = product.strip().decode('UTF-8', errors='replace')
 
-            # Don't add a new entry if there's already one for the same product model
-            if product in models:
+            # Don't add a new entry if there's already one for the same
+            # product/model
+            product_standardized = standardize(product)
+            if product_standardized in models:
                 logging.debug('Ignoring already found *Product: "%s".' %
                               product)
                 continue
 
             logging.debug('Product: "%s"' % product)
             deviceid = "MFG:%s;MDL:%s;" % (manufacturer, product)
+            if (drventry != None):
+                deviceid += "DRV:%s;" % drventry
             uri = "%d/%s" % (line, filename)
             ppds += [PPD(uri, language, manufacturer, nickname, deviceid)]
+            num_products += 1
             line += 1
+            models += [product_standardized]
+
+        if (num_products == 1 and num_device_ids > 0):
+            # If there is at least one device ID and only one Product line, do
+            # not consider the Product line as another model than the one
+            # represented by the device ID and use only the data of the device
+            # ID.
+            ppds.pop()
 
         return ppds
     except:
