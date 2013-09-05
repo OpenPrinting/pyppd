@@ -16,7 +16,7 @@ class Commit:
         # Remove garbage from array
         while True:
             garbage = log_array.pop()
-            if garbage.find('files changed') != -1: break
+            if re.search(r'files? changed', garbage): break
 
         self.changed_files = []
         changed_file = log_array.pop()
