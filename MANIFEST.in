@@ -1,2 +1,3 @@
 include *.txt
 include pyppd/*.in
+include ISSUES
