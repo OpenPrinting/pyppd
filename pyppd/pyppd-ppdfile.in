@@ -17,6 +17,7 @@ from io import BytesIO
 
 from os.path import basename
 from errno import EPIPE
+import lzma
 
 def load():
     ppds_compressed = base64.b64decode(ppds_compressed_b64)
@@ -45,14 +46,37 @@ def cat(ppd):
     # Remove also the index
     ppd = "0/" + ppd[ppd.find("/")+1:]
 
+    # Object for streaming decompression
+    decompressor = lzma.LZMADecompressor()
+    # size for one decompression i.e. ~10KB
+    size = 10000
+
     ppds = load()
-    ppds['ARCHIVE'] = BytesIO(decompress(ppds['ARCHIVE']))
+
+    ppdtext=bytearray()
 
     if ppd in ppds:
         start = ppds[ppd][0]
         length = ppds[ppd][1]
-        ppds['ARCHIVE'].seek(start)
-        return ppds['ARCHIVE'].read(length)
+
+        text = BytesIO(decompressor.decompress(ppds['ARCHIVE'],size))
+        for i in range(int(start/size)):
+            text = BytesIO(decompressor.decompress(ppds['ARCHIVE'],size))
+        text.seek(start%size)
+
+        if((size-(start%size)) < length):
+            ppdtext.extend(text.read())
+            length = length - (size-(start%size))
+            text = BytesIO(decompressor.decompress(ppds['ARCHIVE'],size))
+            while(size < length):
+                ppdtext.extend(text.read())
+                length = length - size
+                text = BytesIO(decompressor.decompress(ppds['ARCHIVE'],size))
+            ppdtext.extend(text.read(length))
+        else:
+            ppdtext.extend(text.read(length))
+        
+        return ppdtext
 
 def main():
     usage = "usage: %prog list\n" \
