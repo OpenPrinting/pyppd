@@ -45,11 +45,11 @@ def cat(ppd):
 
     # Object for streaming decompression
     decompressor = lzma.LZMADecompressor()
-    # size for one decompression i.e. ~10KB
-    size = 10000
+    # size for one decompression i.e. ~20MB
+    size = 20000000
 
     ppds = load()
-
+    ppds['ARCHIVE'] = base64.b64decode(ppds['ARCHIVE'].encode('ASCII'))
     ppdtext=bytearray()
 
     if ppd in ppds:
