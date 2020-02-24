@@ -48,7 +48,7 @@ def compress(directory):
     ppds_index = {}
     abs_directory = os.path.abspath(directory)
 
-    for ppd_path in find_files(directory, ("*.ppd", "*.ppd.gz")):
+    for ppd_path in sorted(find_files(directory, ("*.ppd", "*.ppd.gz"))):
         # Remove 'directory/' from the filename
         ppd_filename = ppd_path[len(abs_directory)+1:]
 
