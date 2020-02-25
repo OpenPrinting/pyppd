@@ -9,10 +9,7 @@ import sys
 from optparse import OptionParser
 from sys import argv
 import base64
-try:
-    import cPickle as pickle
-except ImportError:
-    import pickle
+import json
 from io import BytesIO
 
 from os.path import basename
@@ -22,7 +19,7 @@ import lzma
 def load():
     ppds_compressed = base64.b64decode(ppds_compressed_b64)
     ppds_decompressed = decompress(ppds_compressed)
-    ppds = pickle.loads(ppds_decompressed)
+    ppds = json.loads(ppds_decompressed.decode(encoding='ASCII'))
     return ppds
 
 def ls():
@@ -48,11 +45,11 @@ def cat(ppd):
 
     # Object for streaming decompression
     decompressor = lzma.LZMADecompressor()
-    # size for one decompression i.e. ~10KB
-    size = 10000
+    # size for one decompression i.e. ~20MB
+    size = 20000000
 
     ppds = load()
-
+    ppds['ARCHIVE'] = base64.b64decode(ppds['ARCHIVE'].encode('ASCII'))
     ppdtext=bytearray()
 
     if ppd in ppds:

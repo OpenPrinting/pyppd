@@ -7,11 +7,7 @@ import logging
 from random import randint
 import pyppd.compressor
 import pyppd.ppd
-
-try:
-    import cPickle as pickle
-except ImportError:
-    import pickle
+import json
 
 def archive(ppds_directory):
     """Returns a string with the decompressor, its dependencies and the archive.
@@ -52,7 +48,7 @@ def compress(directory):
     ppds_index = {}
     abs_directory = os.path.abspath(directory)
 
-    for ppd_path in find_files(directory, ("*.ppd", "*.ppd.gz")):
+    for ppd_path in sorted(find_files(directory, ("*.ppd", "*.ppd.gz"))):
         # Remove 'directory/' from the filename
         ppd_filename = ppd_path[len(abs_directory)+1:]
 
@@ -77,13 +73,12 @@ def compress(directory):
         logging.error('No PPDs found in folder "%s".' % directory)
         return None
 
-    logging.info('Compressing archive.')
-    ppds_index['ARCHIVE'] = pyppd.compressor.compress(ppds)
-    logging.info('Generating and compressing pickle dump.')
-    ppds_pickle = pyppd.compressor.compress(pickle.dumps(ppds_index))
+    logging.info('Compressing archive, encode to base64 string.')
+    ppds_index['ARCHIVE'] = base64.b64encode(pyppd.compressor.compress(ppds)).decode('ASCII')
+    logging.info('Generating and compressing json dump.')
+    ppds_json = pyppd.compressor.compress(json.dumps(ppds_index, ensure_ascii=True, sort_keys=True).encode('ASCII'))
 
-
-    return ppds_pickle
+    return ppds_json
 
 
 def read_file_in_syspath(filename):

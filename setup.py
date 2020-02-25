@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from distutils.core import setup
 from distutils.command.sdist import sdist as _sdist
@@ -28,8 +28,7 @@ setup(
     url='https://github.com/OpenPrinting/pyppd/',
     license='MIT',
     description='A CUPS PostScript Printer Driver\'s compressor and generator',
-    long_description=open('README', 'rb').read().decode('UTF-8') + "\n" +
-                     open('ISSUES', 'rb').read().decode('UTF-8'),
+    long_description=open('README', 'rb').read().decode('UTF-8'),
     cmdclass={'sdist': sdist},
     classifiers=[
         'Development Status :: 5 - Production/Stable',
