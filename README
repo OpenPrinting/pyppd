@@ -4,8 +4,8 @@ pyppd
 ``pyppd`` is a CUPS PPD generator. It holds an compressed archive of PPDs, which
 can be listed and retrieved only when needed by CUPS, saving disk space.
 
-Instalation
------------
+Installation
+------------
 
 To install ``pyppd``, you can use:
 
