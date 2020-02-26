@@ -8,7 +8,7 @@ import pyppd.archiver
 
 def parse_args():
     usage = "usage: %prog [options] ppds_directory"
-    version = "%prog 1.0.2\n" \
+    version = "%prog 1.1.0\n" \
               "Copyright (c) 2013 Vitor Baptista.\n" \
               "This is free software; see the source for copying conditions.\n" \
               "There is NO warranty; not even for MERCHANTABILITY or\n" \

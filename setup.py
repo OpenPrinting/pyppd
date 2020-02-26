@@ -19,7 +19,7 @@ class sdist(_sdist):
 
 setup(
     name='pyppd',
-    version='1.0.2',
+    version='1.1.0',
     author='Vitor Baptista',
     author_email='vitor@vitorbaptista.com',
     packages=['pyppd'],
