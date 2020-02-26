@@ -62,4 +62,8 @@ Contributors
 
 * **Flávio Ribeiro** and **Diógenes Fernandes** - Refactorings and general Python's best practices tips.
 
+* **Didier Raboud** - Make archives reproducible, by sorting the list of found PPDs and using JSON dumps instead of Pickle dumps.
+
+* **Sambhav Dusad** - Streaming decompression, to not need to hold the whole decompressed archive in memory.
+
 * **Google's OSPO** - Initial funding at GSoC 2010.
