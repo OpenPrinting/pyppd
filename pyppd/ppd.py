@@ -84,12 +84,17 @@ def parse(ppd_file, filename):
     language_re     = re.search(b'\*LanguageVersion:\s*(.+)', ppd_file)
     manufacturer_re = re.search(b'\*Manufacturer:\s*"(.+)"', ppd_file)
     nickname_re     = re.search(b'\*NickName:\s*"(.+)"', ppd_file)
+    modelname_re    = re.search(b'\*ModelName:\s*"(.+)"', ppd_file)
     deviceids       = re.findall(b'\*1284DeviceID:\s*"(.+)"', ppd_file)
 
     try:
         language = LANGUAGES[language_re.group(1).decode('UTF-8', errors='replace').strip().lower()]
         manufacturer = manufacturer_re.group(1).strip().decode('UTF-8', errors='replace')
         nickname = nickname_re.group(1).strip().decode('UTF-8', errors='replace')
+        if modelname_re != None:
+            modelname = modelname_re.group(1).strip().decode('UTF-8', errors='replace')
+        else:
+            modelname = None
         logging.debug('Language: "%s", Manufacturer: "%s", Nickname: "%s".' %
                       (language, manufacturer, nickname))
         ppds = []
@@ -98,6 +103,7 @@ def parse(ppd_file, filename):
         line = 0
         num_device_ids = 0
         num_products = 0
+        product_added = False
         if deviceids:
             for deviceid in deviceids:
                 deviceid = deviceid.decode('UTF-8', errors='replace')
@@ -123,32 +129,45 @@ def parse(ppd_file, filename):
                     line += 1
 
         for product in re.findall(b'\*Product:\s*"\(\s*(.+?)\s*\)"', ppd_file):
+            num_products += 1
             product = product.strip().decode('UTF-8', errors='replace')
 
             # Don't add a new entry if there's already one for the same
             # product/model
             product_standardized = standardize(product)
+            logging.debug('Product: "%s"' % product)
             if product_standardized in models:
                 logging.debug('Ignoring already found *Product: "%s".' %
                               product)
                 continue
 
-            logging.debug('Product: "%s"' % product)
             deviceid = "MFG:%s;MDL:%s;" % (manufacturer, product)
             if (drventry != None):
                 deviceid += "DRV:%s;" % drventry
             uri = "%d/%s" % (line, filename)
             ppds += [PPD(uri, language, manufacturer, nickname, deviceid)]
-            num_products += 1
             line += 1
+            product_added = True
             models += [product_standardized]
 
-        if (num_products == 1 and num_device_ids > 0):
-            # If there is at least one device ID and only one Product line, do
-            # not consider the Product line as another model than the one
-            # represented by the device ID and use only the data of the device
-            # ID.
+        if (num_products == 1 and product_added and
+            (num_device_ids > 0 or modelname != None)):
+            # If there is only one Product line, it either contains the
+            # model described by the PPD's ModelName or NickName or something
+            # weird. So we will not add it. And if we have no device ID
+            # from the PPD, we prefer the info from the the ModelName.
             ppds.pop()
+            logging.debug('Single Product line, entry removed')
+            if (num_device_ids == 0 and modelname != None):
+                modelname_standardized = standardize(modelname)
+                logging.debug('ModelName: "%s"' % modelname)
+                deviceid = "MFG:%s;MDL:%s;" % (manufacturer, modelname)
+                if drventry != None:
+                    deviceid += "DRV:%s;" % drventry
+                ppds += [PPD(uri, language, manufacturer, nickname, deviceid)]
+
+        if len(ppds) == 0:
+            logging.info('WARNING: No index entry generated for %s' % filename)
 
         return ppds
     except:
