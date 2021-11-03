@@ -150,8 +150,14 @@ def parse(ppd_file, filename):
             product_added = True
             models += [product_standardized]
 
+        # Note that we do not consider the ModelName if it contains
+        # "BR-Script" here, as in PPD files for Brother BR-Script printers
+        # we want to have the Product entry, as this is most probably
+        # what the printer reports as device ID (there is no explicit device
+        # ID entry in the PPD file).
         if (num_products == 1 and product_added and
-            (num_device_ids > 0 or modelname != None)):
+            (num_device_ids > 0 or
+             (modelname != None and ("br-script" not in modelname.lower())))):
             # If there is only one Product line, it either contains the
             # model described by the PPD's ModelName or NickName or something
             # weird. So we will not add it. And if we have no device ID
