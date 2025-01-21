@@ -44,7 +44,7 @@ def compress(directory):
     returns a compressed pickle dump of it.
 
     """
-    ppds = b""
+    ppds = bytearray()
     ppds_index = {}
     abs_directory = os.path.abspath(directory)
 
