@@ -1,0 +1,112 @@
+.TH PYPPD 1 "April 2025" "pyppd 1.1.1" "CUPS Commands"
+.SH NAME
+pyppd \- CUPS PPD generator and compressor
+.SH SYNOPSIS
+.B pyppd
+[
+.B \-v
+|
+.B \-\-verbose
+] [
+.B \-d
+|
+.B \-\-debug
+] [
+.B \-o
+.I filename
+|
+.B \-\-output=\fIfilename\fR
+]
+.I ppds_directory
+.SH DESCRIPTION
+.B pyppd
+is a CUPS PPD generator that creates a compressed archive of PPD files. It holds a compressed archive of PPDs, which can be listed and retrieved only when needed by CUPS, saving disk space.
+.PP
+At first, you have to create a PPD archive. For such, put all PPDs (they might be gzipped) you want to add in the archive inside a single folder (which can have subfolders), then run:
+.PP
+.B pyppd
+.I /path/to/your/ppd/folder
+.PP
+It'll create
+.B pyppd-ppdfile
+in your current folder. This executable only works with the same Python version that you used to generate it.
+.SH COMMANDS
+The generated
+.B pyppd-ppdfile
+executable supports the following commands:
+.TP 5
+.B list
+List all PPDs in the archive
+.TP 5
+.BI cat " URI"
+Extract the PPD with the given URI from the archive
+.SH EXAMPLES
+Create a PPD archive:
+.PP
+.B pyppd
+.I /usr/share/ppd
+.PP
+List the PPDs in the archive:
+.PP
+.B ./pyppd-ppdfile list
+.PP
+Extract a specific PPD from the archive:
+.PP
+.B ./pyppd-ppdfile cat pyppd-ppdfile:printer/model.ppd
+.PP
+Rename the archive for specialized use:
+.PP
+.B mv pyppd-ppdfile laserjet
+.br
+.B ./laserjet list
+.SH OPTIONS
+.TP 5
+.B \-v, \-\-verbose
+Increase verbosity level. Can be supplied multiple times to increase verbosity further.
+.TP 5
+.B \-d, \-\-debug
+Print debug messages (equivalent to maximum verbosity).
+.TP 5
+.BI \-o " filename" , \-\-output= filename
+Write archive to
+.I filename
+instead of the default
+.B pyppd-ppdfile
+.SH FILES
+.TP 5
+.I /usr/lib/cups/driver/pyppd-ppdfile
+The PPD archive file used by CUPS
+.SH REQUIREMENTS
+.B pyppd
+requires Python 3.x and XZ Utils (http://tukaani.org/xz/).
+.SH SEE ALSO
+.BR cups (1),
+.BR ppdc (1),
+.BR ppdhtml (1),
+.BR ppdi (1),
+.BR ppdmerge (1),
+.BR ppdpo (1),
+.BR cupsd (8)
+.SH AUTHORS
+Vitor Baptista <vitor@vitorbaptista.com>
+.PP
+Contributors:
+.br
+Till Kamppeter - Original idea, mentoring and feedback
+.br
+Hin-Tak Leung - Technical suggestions
+.br
+Martin Pitt - Python 3 port
+.br
+Flávio Ribeiro and Diógenes Fernandes - Refactorings and Python best practices
+.br
+Didier Raboud - Made archives reproducible
+.br
+Sambhav Dusad - Streaming decompression
+.br
+Google's OSPO - Initial funding at GSoC 2010
+.SH COPYRIGHT
+Copyright \(co 2012-2025 Vitor Baptista.
+.PP
+This program is free software; licensed under the MIT license.
+
