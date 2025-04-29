@@ -37,4 +37,8 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Topic :: Printing',
         ],
+        test_suite='tests',
+        data_files=[
+        ('share/man/man1', ['pyppd.1']),
+    ],
 )
