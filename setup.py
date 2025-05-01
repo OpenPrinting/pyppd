@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from distutils.core import setup
+from setuptools import setup, find_packages
 from distutils.command.sdist import sdist as _sdist
 
 class sdist(_sdist):
@@ -22,23 +22,36 @@ setup(
     version='1.1.1',
     author='Vitor Baptista',
     author_email='vitor@vitorbaptista.com',
-    packages=['pyppd'],
-    package_data={'pyppd': ['*.in']},
+    packages=find_packages(),
+    include_package_data=True,
+    package_data={
+        'pyppd': [
+            'pyppd-ppdfile.in'  # Now properly included in package_data
+        ]
+    },
     scripts=['bin/pyppd'],
     url='https://github.com/OpenPrinting/pyppd/',
     license='MIT',
     description='A CUPS PostScript Printer Driver\'s compressor and generator',
     long_description=open('README', 'rb').read().decode('UTF-8'),
     cmdclass={'sdist': sdist},
+    install_requires=[
+        'setuptools',
+        'importlib-resources>=5.0; python_version < "3.9"'
+    ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: System Administrators',
         'Operating System :: POSIX',
         'License :: OSI Approved :: MIT License',
         'Topic :: Printing',
-        ],
-        test_suite='tests',
-        data_files=[
+    ],
+    data_files=[
         ('share/man/man1', ['pyppd.1']),
     ],
+    entry_points={
+        'console_scripts': [
+            'pyppd=pyppd.runner:main'
+        ]
+    }
 )
