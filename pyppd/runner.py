@@ -2,7 +2,7 @@ import os
 import stat
 import errno
 import logging
-import logging.handlers
+import sys
 from optparse import OptionParser
 import pyppd.archiver
 
@@ -13,63 +13,53 @@ def parse_args():
               "This is free software; see the source for copying conditions.\n" \
               "There is NO warranty; not even for MERCHANTABILITY or\n" \
               "FITNESS FOR A PARTICULAR PURPOSE."
-    parser = OptionParser(usage=usage,
-                          version=version)
+    parser = OptionParser(usage=usage, version=version)
     parser.add_option("-v", "--verbose",
-                      action="count", dest="verbosity",
-                      help="run verbosely (can be supplied multiple times to " \
-                           "increase verbosity)")
-    parser.add_option("-d", "--debug",
-                      action="store_const", const=2, dest="verbose",
-                      help="print debug messages")
+                      action="count", dest="verbosity", default=0,
+                      help="Increase verbosity level (up to -vv for debug)")
     parser.add_option("-o", "--output",
                       default="pyppd-ppdfile", metavar="FILE",
-                      help="write archive to FILE [default %default]")
+                      help="Write archive to FILE [default: %default]")
     (options, args) = parser.parse_args()
 
     if len(args) != 1:
-        parser.error("incorrect number of arguments")
-
+        parser.error("Incorrect number of arguments")
     if not os.path.isdir(args[0]):
-        parser.error("'%s' isn't a directory" % args[0])
+        parser.error(f"'{args[0]}' is not a directory")
 
     return (options, args)
 
 def configure_logging(verbosity):
-    """Configures logging verbosity
-
-    To stdout, we only WARNING of worse messages in a simpler format. To the
-    file, we save every log message with its time, level, module and method.
-    We also rotate the log_file, removing old entries when it reaches 2 MB.
-    """
-
+    """Configure logging based on verbosity level"""
+    level = logging.WARNING
     if verbosity == 1:
         level = logging.INFO
-    elif verbosity == 2:
+    elif verbosity >= 2:
         level = logging.DEBUG
-    else:
-        level = logging.WARNING
 
-    formatter = '[%(levelname)s] %(module)s.%(funcName)s(): %(message)s'
-
-    logging.basicConfig(level=level, format=formatter)
+    # Configure logging to stdout with simple format
+    logging.basicConfig(
+        level=level,
+        format='%(message)s',
+        stream=sys.stdout
+    )
 
 def run():
     (options, args) = parse_args()
     configure_logging(options.verbosity)
     ppds_directory = args[0]
 
-    logging.info('Archiving folder "%s".' % ppds_directory)
+    logging.info(f'Compressing folder "{ppds_directory}"')
     archive = pyppd.archiver.archive(ppds_directory)
     if not archive:
         exit(errno.ENOENT)
 
-    logging.info('Writing archive to "%s".' % options.output)
-    output = open(options.output, "wb+")
-    output.write(archive)
-    output.close()
+    logging.info(f'Writing archive to "{options.output}"')
+    with open(options.output, "wb") as f:
+        f.write(archive)
 
-    logging.info('Setting "%s" executable flag.' % options.output)
-    execute_mode = stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH
-    mode = os.stat(options.output).st_mode | execute_mode
-    os.chmod(options.output, mode)
+    logging.debug(f'Setting executable permissions on "{options.output}"')
+    os.chmod(options.output, os.stat(options.output).st_mode | stat.S_IEXEC)
+
+if __name__ == "__main__":
+    run()
