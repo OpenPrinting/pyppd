@@ -8,3 +8,7 @@ dist
 *.swp
 CHANGES.txt
 MANIFEST
+pyppd-ppdfile
+test-output
+custom-output
+renamed-archive
