@@ -1,15 +1,17 @@
-# Makefile for testing pyppd
-
-.PHONY: all test clean
-
-all: test
+.PHONY: test clean-test
 
 test:
-	@echo "Running pyppd unit tests..."
-	PYTHONPATH=$(PWD) python3 -m unittest discover -s tests
+	PYTHONPATH=. python3 -m pytest tests/
 
-clean:
-	rm -rf *.pyc __pycache__ tests/__pycache__
-	rm -f pyppd-ppdfile
-	rm -f test-output custom-output renamed-archive
+test-verbose:
+	PYTHONPATH=. python3 -m pytest -v tests/
 
+test-unit:
+	PYTHONPATH=. python3 -m unittest discover -s tests
+
+clean-test:
+	rm -rf .pytest_cache
+	rm -rf __pycache__
+	rm -rf tests/__pycache__
+	rm -rf .coverage
+	rm -rf htmlcov
