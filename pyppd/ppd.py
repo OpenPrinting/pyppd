@@ -81,11 +81,12 @@ def parse(ppd_file, filename):
         return model_name.lower().replace("Hewlett-Packard ".lower(), "").replace("%s " % manufacturer.lower(), "").strip()
 
     logging.debug('Parsing %s.' % filename)
-    language_re     = re.search(b'\*LanguageVersion:\s*(.+)', ppd_file)
-    manufacturer_re = re.search(b'\*Manufacturer:\s*"(.+)"', ppd_file)
-    nickname_re     = re.search(b'\*NickName:\s*"(.+)"', ppd_file)
-    modelname_re    = re.search(b'\*ModelName:\s*"(.+)"', ppd_file)
-    deviceids       = re.findall(b'\*1284DeviceID:\s*"(.+)"', ppd_file)
+    # Fix escape sequences by using raw byte strings (rb)
+    language_re     = re.search(rb'\*LanguageVersion:\s*(.+)', ppd_file)
+    manufacturer_re = re.search(rb'\*Manufacturer:\s*"(.+)"', ppd_file)
+    nickname_re     = re.search(rb'\*NickName:\s*"(.+)"', ppd_file)
+    modelname_re    = re.search(rb'\*ModelName:\s*"(.+)"', ppd_file)
+    deviceids       = re.findall(rb'\*1284DeviceID:\s*"(.+)"', ppd_file)
 
     try:
         language = LANGUAGES[language_re.group(1).decode('UTF-8', errors='replace').strip().lower()]
@@ -113,12 +114,14 @@ def parse(ppd_file, filename):
                 uri = "%d/%s" % (line, filename)
                 # Save a DRV field (from Foomatic) and use it for all entries
                 # of this PPD
-                newdrventry = re.findall(".*DRV:\s*(.*?)\s*;.*", deviceid, re.I)
+                # Fix escape sequences by using raw strings (r)
+                newdrventry = re.findall(r".*DRV:\s*(.*?)\s*;.*", deviceid, re.I)
                 if (len(newdrventry) > 0):
                     drventry = newdrventry[0]
                 elif (drventry != None):
                     deviceid += "DRV:%s;" % drventry
-                newmodels = re.findall(".*(?:MODEL|MDL):\s*(.*?)\s*;.*", deviceid, re.I)
+                # Fix escape sequences by using raw strings (r)
+                newmodels = re.findall(r".*(?:MODEL|MDL):\s*(.*?)\s*;.*", deviceid, re.I)
                 if (newmodels):
                     newmodels = list(map(standardize, newmodels))
                 if (len(newmodels) > 0):
@@ -128,7 +131,8 @@ def parse(ppd_file, filename):
                     num_device_ids += 1
                     line += 1
 
-        for product in re.findall(b'\*Product:\s*"\(\s*(.+?)\s*\)"', ppd_file):
+        # Fix escape sequences by using raw byte strings (rb)
+        for product in re.findall(rb'\*Product:\s*"\(\s*(.+?)\s*\)"', ppd_file):
             num_products += 1
             product = product.strip().decode('UTF-8', errors='replace')
 
