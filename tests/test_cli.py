@@ -36,9 +36,11 @@ class TestCLI(unittest.TestCase):
     
     def test_cli_basic(self):
         """Test basic CLI functionality."""
-        # Run the pyppd command
-        result = subprocess.run([sys.executable, "-m", "bin.pyppd", self.test_dir],
-                               check=True, capture_output=True)
+        result = subprocess.run(
+            ["bin/pyppd", self.test_dir],  # Direct script execution
+            check=True,
+            capture_output=True
+        )
         
         # Check that the output file was created
         self.assertTrue(os.path.exists("pyppd-ppdfile"))
@@ -49,9 +51,11 @@ class TestCLI(unittest.TestCase):
         output_file = "custom-output"
         
         # Run the pyppd command
-        result = subprocess.run([sys.executable, "-m", "bin.pyppd", 
-                               "-o", output_file, self.test_dir],
-                               check=True, capture_output=True)
+        result = subprocess.run(
+            ["bin/pyppd", "-o", output_file, self.test_dir],
+            check=True,
+            capture_output=True
+        )
         
         # Check that the output file was created
         self.assertTrue(os.path.exists(output_file))
@@ -63,9 +67,11 @@ class TestCLI(unittest.TestCase):
     def test_cli_verbose(self):
         """Test CLI with verbose output."""
         # Run the pyppd command with verbose flag
-        result = subprocess.run([sys.executable, "-m", "bin.pyppd", 
-                               "-v", self.test_dir],
-                               check=True, capture_output=True)
+        result = subprocess.run(
+            ["bin/pyppd", "-v", self.test_dir],
+            check=True,
+            capture_output=True
+        )
         
         # Check that the output file was created
         self.assertTrue(os.path.exists("pyppd-ppdfile"))
@@ -75,4 +81,3 @@ class TestCLI(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

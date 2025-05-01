@@ -39,8 +39,8 @@ class TestArchiver(unittest.TestCase):
         shutil.rmtree(self.test_dir)
     
     def test_find_files(self):
-        """Test finding PPD files in a directory."""
-        ppd_files = list(pyppd.archiver.find_files(self.test_dir, ["*.ppd"]))
+        ppd_files = [str(p) for p in pyppd.archiver.find_files(self.test_dir, ["*.ppd"])]
+        self.assertIn(self.ppd_file, ppd_files)
         
         # Check that we found both PPD files
         self.assertEqual(len(ppd_files), 2)
@@ -70,14 +70,15 @@ class TestArchiver(unittest.TestCase):
     
     def test_archive(self):
         """Test creating an executable archive."""
-        archive = pyppd.archiver.archive(self.test_dir)
-        
-        # Check that archive creation worked
-        self.assertIsNotNone(archive)
-        
-        # Check that the archive contains the expected components
-        self.assertIn(b"@compressor@", archive)
-        self.assertIn(b"@ppds_compressed_b64@", archive)
+        archive_content = pyppd.archiver.archive(self.test_dir)
+    
+        self.assertIsNotNone(archive_content)
+        # Verify compressor functions exist
+        self.assertIn(b"def compress(value):", archive_content)
+        self.assertIn(b"def decompress(value):", archive_content)
+       # Verify placeholders replaced
+        self.assertNotIn(b"@compressor@", archive_content)
+        self.assertNotIn(b"@ppds_compressed_b64@", archive_content)
 
 if __name__ == '__main__':
     unittest.main()
