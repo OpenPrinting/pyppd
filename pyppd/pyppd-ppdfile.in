@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
+# @compressor@
+import base64
+import sys
 
-# compressor.py
-@compressor@
-# compressor.py
+# PPDs Archive
+ppds_compressed_b64 = b"@ppds_compressed_b64@"
 
 import os
 import sys
@@ -11,6 +13,8 @@ from sys import argv
 import base64
 import json
 from io import BytesIO
+import subprocess
+from subprocess import Popen, PIPE  # Add this import to fix the error
 
 from os.path import basename
 from errno import EPIPE
@@ -114,8 +118,7 @@ def main():
     else:
         parser.error("argument " + args[0] + " invalid")
 
-# PPDs Archive
-ppds_compressed_b64 = b"@ppds_compressed_b64@"
+
 
 if __name__ == "__main__":
     try:
