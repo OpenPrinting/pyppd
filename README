@@ -50,60 +50,159 @@ $ ./laserstar list
 laserstar:LaserStar/LaserStar-XX100.ppd
 ```
 
-## Running Tests
+## Testing Framework
+
+### Overview
+
+`pyppd` uses a comprehensive testing approach that includes unit tests, integration tests, and end-to-end functionality tests. The test suite verifies:
+
+1. **Component functionality**: Each module is tested in isolation to ensure it correctly performs its specific tasks
+2. **Integration between components**: Tests verify that modules work correctly together
+3. **End-to-end functionality**: Tests validate the complete workflow from archive creation to PPD extraction
+4. **Command-line interface**: Ensures the CLI works as expected with various arguments
+
+### Test Architecture
+
+The test suite is organized as follows:
+
+- `tests/test_archiver.py` - Tests for the PPD archive creation functionality
+- `tests/test_compressor.py` - Tests for the compression and decompression functions
+- `tests/test_ppd.py` - Tests for PPD file parsing functionality
+- `tests/test_cli.py` - Tests for the command-line interface
+- `tests/test_integration.py` - End-to-end tests verifying the complete workflow
+
+The tests use temporary directories and sample PPD files to create controlled environments for testing. This approach ensures that tests can run without affecting the system and can be executed in any environment.
+
+### Setting Up a Test Environment
+
+For the best testing experience, we recommend using a virtual environment:
+
+```bash
+# Create a virtual environment
+python -m venv pyppd-env
+
+# Activate the virtual environment
+# On Linux/macOS:
+source pyppd-env/bin/activate
+# On Windows:
+pyppd-env\Scripts\activate
+
+# Install development dependencies
+pip install pytest
+```
+
+### Running Tests
 
 There are several ways to run the tests for pyppd. All methods allow you to run the tests without installing pyppd.
 
-### Method 1: Using the Makefile
+#### Method 1: Using the Makefile
 
 The simplest way to run tests:
 
-```
+```bash
 $ make -f Makefile.tests test
 ```
 
 For verbose output:
 
-```
+```bash
 $ make -f Makefile.tests test-verbose
 ```
 
-### Method 2: Using pytest directly
+To run just the unit tests:
 
+```bash
+$ make -f Makefile.tests test-unit
 ```
+
+To clean test artifacts:
+
+```bash
+$ make -f Makefile.tests clean-test
+```
+
+#### Method 2: Using pytest directly
+
+```bash
 $ PYTHONPATH=. pytest tests/
 ```
 
 For more detailed output:
 
-```
+```bash
 $ PYTHONPATH=. pytest -v tests/
 ```
 
-### Method 3: Using unittest
+To run only specific test files:
 
+```bash
+$ PYTHONPATH=. pytest tests/test_archiver.py
 ```
+
+#### Method 3: Using unittest
+
+```bash
 $ PYTHONPATH=. python3 -m unittest discover -s tests
 ```
 
-### Setup for Development
+To run specific test files:
 
-Install test dependencies:
-
-```
-$ pip install pytest
+```bash
+$ PYTHONPATH=. python3 -m unittest tests/test_archiver.py
 ```
 
- Test Running Tests Without Installation OR Out of the Source Tree: 
+### Running Tests Outside the Source Tree
 
-# Using Makefile.tests
-make -f Makefile.tests test
+You can also run tests from outside the source directory:
 
-# Using pytest directly
-PYTHONPATH=. pytest tests/
+```bash
+$ PYTHONPATH=/path/to/pyppd pytest /path/to/pyppd/tests/
+```
 
-# Using unittest
-PYTHONPATH=. python3 -m unittest discover -s tests
+### Code Coverage
+
+To check test coverage (requires the `pytest-cov` package):
+
+```bash
+$ pip install pytest-cov
+$ PYTHONPATH=. pytest --cov=pyppd tests/
+```
+
+For a detailed HTML coverage report:
+
+```bash
+$ PYTHONPATH=. pytest --cov=pyppd --cov-report=html tests/
+```
+
+## Implementation Design
+
+`pyppd` follows a modular design with these core components:
+
+1. **PPD Parser** (`ppd.py`): Parses PPD files to extract printer model information and device IDs.
+
+2. **Compression Engine** (`compressor.py`): Handles compression and decompression using the XZ binary.
+
+3. **Archive Generator** (`archiver.py`): Creates self-extracting Python scripts that contain compressed PPD files with an index for quick access.
+
+4. **Command Runner** (`runner.py`): Provides the command-line interface and handles user input.
+
+The system works as follows:
+
+1. During archive creation:
+   - PPD files are collected from the specified directory
+   - Each PPD is parsed to extract metadata
+   - All PPDs are concatenated into a single byte array
+   - The byte array is compressed with XZ
+   - A JSON index is created mapping printer models to their position in the compressed archive
+   - The compressed archive and index are embedded in a Python script template
+
+2. During PPD extraction:
+   - The index is decompressed and loaded
+   - The requested PPD's position is looked up in the index
+   - Only the required portion of the archive is decompressed
+   - The PPD is returned to standard output
+
+This design minimizes memory usage while allowing fast access to individual PPD files without decompressing the entire archive.
 
 ## Contributors
 
